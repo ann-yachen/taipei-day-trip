@@ -40,12 +40,16 @@ def get_attractions():
 	page = request.args.get("page", 0, int)
 	keyword = request.args.get("keyword", None)
 	id_start = page * 12
-	id_end = id_start + 12
 	if keyword == None:
 		try:
 			cnx = cnxpool.get_connection()
 			cnxcursor = cnx.cursor(dictionary = True)
-			cnxcursor.execute("SELECT * FROM attractions")
+			# Get the number of attractions in table
+			cnxcursor.execute("SELECT COUNT(*) FROM attractions")
+			count = cnxcursor.fetchall()
+			number_attractions = count[0]["COUNT(*)"]
+			# Get the data of attractions in range
+			cnxcursor.execute("SELECT * FROM attractions LIMIT %s, %s", (id_start, 12))
 			attractions = cnxcursor.fetchall()
 			# Change the value of "images" into a list
 			for attraction in attractions:
@@ -54,9 +58,9 @@ def get_attractions():
 				attraction["images"] = images
 			next_page = page + 1
 			# Check if there is the last page
-			if len(attractions) / 12 < page + 1:
+			if number_attractions / 12 < page + 1:
 				next_page = None
-			return jsonify({"nextPage": next_page, "data": attractions[id_start : id_end]})
+			return jsonify({"nextPage": next_page, "data": attractions})
 		except:
 			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
 		finally:
@@ -66,6 +70,7 @@ def get_attractions():
 		try:
 			cnx = cnxpool.get_connection()
 			cnxcursor = cnx.cursor(dictionary = True)
+			# Get the attractions with keyword 
 			cnxcursor.execute("SELECT * FROM attractions WHERE category=%s OR name LIKE %s", (keyword, "%" + keyword + "%"))
 			attractions = cnxcursor.fetchall()
 			# Change the value of "images" into a list
@@ -77,7 +82,7 @@ def get_attractions():
 			# Check if there is the last page
 			if len(attractions) / 12 <= page + 1:
 				next_page = None
-			return jsonify({"nextPage": next_page, "data": attractions[id_start : id_end]})
+			return jsonify({"nextPage": next_page, "data": attractions[id_start : id_start + 12]})
 		except:
 			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
 		finally:
