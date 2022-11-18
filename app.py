@@ -70,8 +70,12 @@ def get_attractions():
 		try:
 			cnx = cnxpool.get_connection()
 			cnxcursor = cnx.cursor(dictionary = True)
-			# Get the attractions with keyword 
-			cnxcursor.execute("SELECT * FROM attractions WHERE category=%s OR name LIKE %s", (keyword, "%" + keyword + "%"))
+			# Get the number of attractions in table
+			cnxcursor.execute("SELECT COUNT(*) FROM attractions WHERE category=%s OR name LIKE %s", (keyword, "%" + keyword + "%"))
+			count = cnxcursor.fetchall()
+			number_attractions = count[0]["COUNT(*)"]
+			# Get the attractions with keyword
+			cnxcursor.execute("SELECT * FROM attractions WHERE category=%s OR name LIKE %s LIMIT %s, %s", (keyword, "%" + keyword + "%", id_start, 12))
 			attractions = cnxcursor.fetchall()
 			# Change the value of "images" into a list
 			for attraction in attractions:
@@ -80,9 +84,9 @@ def get_attractions():
 				attraction["images"] = images
 			next_page = page + 1
 			# Check if there is the last page
-			if len(attractions) / 12 <= page + 1:
+			if number_attractions / 12 <= page + 1:
 				next_page = None
-			return jsonify({"nextPage": next_page, "data": attractions[id_start : id_start + 12]})
+			return jsonify({"nextPage": next_page, "data": attractions})
 		except:
 			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
 		finally:
