@@ -1,0 +1,24 @@
+body{
+    margin: 0px;
+    font-size: 20px;
+}
+header{
+    text-align: center;
+}
+nav{
+    display: flex;
+    justify-content: space-between;
+    width: 1200px;
+}
+.hero{
+    width: 1200px;
+    height: 300px;
+}
+footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 104px;
+    background-color: #757575;
+    color: #ffffff;
+}
