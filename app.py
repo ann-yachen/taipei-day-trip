@@ -44,33 +44,26 @@ def get_attractions():
 	offset = page * item_per_page
 	# Check if keyword exists for different sql query setting
 	if keyword == None:
-		get_count_sql = "SELECT COUNT(*) FROM attractions"
-		get_count_par = None
-		get_data_sql = "SELECT * FROM attractions LIMIT %s, %s"
-		get_data_par = (offset, item_per_page)
+		sql = "SELECT * FROM attractions LIMIT %s, %s"
+		par = (offset, item_per_page + 1) # Get all rows of this page and the 1st row of next page
 	else:
-		get_count_sql = "SELECT COUNT(*) FROM attractions WHERE category=%s OR name LIKE %s"
-		get_count_par = (keyword, "%" + keyword + "%")
-		get_data_sql = "SELECT * FROM attractions WHERE category=%s OR name LIKE %s LIMIT %s, %s"
-		get_data_par = (keyword, "%" + keyword + "%", offset, item_per_page)
+		sql = "SELECT * FROM attractions WHERE category=%s OR name LIKE %s LIMIT %s, %s"
+		par = (keyword, "%" + keyword + "%", offset, item_per_page + 1) # Get all rows of this page and the 1st row of next page
 	try:
 		cnx = cnxpool.get_connection()
 		cnxcursor = cnx.cursor(dictionary = True)
-		# Get the number of attractions in table
-		cnxcursor.execute(get_count_sql, get_count_par)
-		count = cnxcursor.fetchall()
-		number_attractions = count[0]["COUNT(*)"]
-		# Get the data of attractions in range
-		cnxcursor.execute(get_data_sql, get_data_par)
+		cnxcursor.execute(sql, par)
 		attractions = cnxcursor.fetchall()
 		# Change the value of "images" into a list
 		for attraction in attractions:
 			images = attraction["images"].split(" ")
 			images.pop() # Remove the last space
 			attraction["images"] = images
-		next_page = page + 1
-		# Check if there is the last page
-		if number_attractions / item_per_page <= page + 1:
+		# Check if there is the last page by getting number of attractions
+		if len(attractions) > 12:
+			next_page = page + 1
+			attractions.pop() # Remove the 1st row of next page
+		else: 			
 			next_page = None
 		return jsonify({"nextPage": next_page, "data": attractions})
 	except:
