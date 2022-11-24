@@ -1,6 +1,6 @@
 from flask import *
 import mysql.connector, mysql.connector.pooling
-app = Flask(__name__)
+app = Flask(__name__, static_folder = "public", static_url_path = "/")
 app.config["JSON_AS_ASCII"] = False
 app.config['JSON_SORT_KEYS'] = False
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -34,65 +34,45 @@ def booking():
 def thankyou():
 	return render_template("thankyou.html")
 
-# RESTful API
+# API to get attractions from database
 @app.route("/api/attractions", methods = ["GET"])
 def get_attractions():
 	page = request.args.get("page", 0, int)
 	keyword = request.args.get("keyword", None)
-	id_start = page * 12
+	# Pagination
+	item_per_page = 12
+	offset = page * item_per_page
+	# Check if keyword exists for different sql query setting
 	if keyword == None:
-		try:
-			cnx = cnxpool.get_connection()
-			cnxcursor = cnx.cursor(dictionary = True)
-			# Get the number of attractions in table
-			cnxcursor.execute("SELECT COUNT(*) FROM attractions")
-			count = cnxcursor.fetchall()
-			number_attractions = count[0]["COUNT(*)"]
-			# Get the data of attractions in range
-			cnxcursor.execute("SELECT * FROM attractions LIMIT %s, %s", (id_start, 12))
-			attractions = cnxcursor.fetchall()
-			# Change the value of "images" into a list
-			for attraction in attractions:
-				images = attraction["images"].split(" ")
-				images.pop() # Remove the last space
-				attraction["images"] = images
-			next_page = page + 1
-			# Check if there is the last page
-			if number_attractions / 12 < page + 1:
-				next_page = None
-			return jsonify({"nextPage": next_page, "data": attractions})
-		except:
-			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
-		finally:
-			cnxcursor.close()
-			cnx.close()
+		sql = "SELECT * FROM attractions LIMIT %s, %s"
+		par = (offset, item_per_page + 1) # Get all rows of this page and the 1st row of next page
 	else:
-		try:
-			cnx = cnxpool.get_connection()
-			cnxcursor = cnx.cursor(dictionary = True)
-			# Get the number of attractions in table
-			cnxcursor.execute("SELECT COUNT(*) FROM attractions WHERE category=%s OR name LIKE %s", (keyword, "%" + keyword + "%"))
-			count = cnxcursor.fetchall()
-			number_attractions = count[0]["COUNT(*)"]
-			# Get the attractions with keyword
-			cnxcursor.execute("SELECT * FROM attractions WHERE category=%s OR name LIKE %s LIMIT %s, %s", (keyword, "%" + keyword + "%", id_start, 12))
-			attractions = cnxcursor.fetchall()
-			# Change the value of "images" into a list
-			for attraction in attractions:
-				images = attraction["images"].split(" ")
-				images.pop() # Remove the last space
-				attraction["images"] = images
+		sql = "SELECT * FROM attractions WHERE category=%s OR name LIKE %s LIMIT %s, %s"
+		par = (keyword, "%" + keyword + "%", offset, item_per_page + 1) # Get all rows of this page and the 1st row of next page
+	try:
+		cnx = cnxpool.get_connection()
+		cnxcursor = cnx.cursor(dictionary = True)
+		cnxcursor.execute(sql, par)
+		attractions = cnxcursor.fetchall()
+		# Change the value of "images" into a list
+		for attraction in attractions:
+			images = attraction["images"].split(" ")
+			images.pop() # Remove the last space
+			attraction["images"] = images
+		# Check if there is the last page by getting number of attractions
+		if len(attractions) > 12:
 			next_page = page + 1
-			# Check if there is the last page
-			if number_attractions / 12 <= page + 1:
-				next_page = None
-			return jsonify({"nextPage": next_page, "data": attractions})
-		except:
-			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
-		finally:
-			cnxcursor.close()
-			cnx.close()
+			attractions.pop() # Remove the 1st row of next page
+		else: 			
+			next_page = None
+		return jsonify({"nextPage": next_page, "data": attractions})
+	except:
+		return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
+	finally:
+		cnxcursor.close()
+		cnx.close()	
 
+# API to get attraction data by id from database
 @app.route("/api/attraction/<attractionId>", methods = ["GET"])
 def get_attraction_by_id(attractionId):
 	try:
@@ -114,6 +94,7 @@ def get_attraction_by_id(attractionId):
 		cnxcursor.close()
 		cnx.close()
 
+# API to get categories from database
 @app.route("/api/categories", methods = ["GET"])
 def get_categories():
 	try:
@@ -129,4 +110,4 @@ def get_categories():
 		cnx.close()
 
 if __name__ == "__main__":
-	app.run(port = 3000)
+	app.run(host = "0.0.0.0", port = 3000)
