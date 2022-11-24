@@ -22,7 +22,7 @@ nav{
     font-size: 30px;
     line-height: 1;
     color: #448899;
-    padding: 12px;
+    padding: 12px 0px;
 }
 nav ul{
     display: flex;
@@ -172,6 +172,20 @@ footer{
     background-color: #757575;
     color: #ffffff;
 }
+/* CSS media query */
+/* 600px < size <= 1200px */ 
+@media screen and (max-width: 1200px){
+    nav{
+        width: 90%;
+    }
+    .welcome{
+        width: 90%;
+    }
+    .attractions{
+        width: 90%;
+        grid-template-columns: repeat(2, 1fr); /* change to 2 columns */
+    }
+}
 /* 360px < size <= 600px */ 
 @media screen and (max-width: 600px){
     nav{
@@ -183,12 +197,11 @@ footer{
     .search .search-keyword{
         width: 195px;
     }
-    .search .keyword-categories--open{
+    .search .categories-menu--open{
         width: 90%;
     }
     .attractions{
         width: 90%;
         grid-template-columns: auto; /* only 1 column */
     }
-
 }

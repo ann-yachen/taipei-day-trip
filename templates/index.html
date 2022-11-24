@@ -44,6 +44,7 @@
         let keyword = null;
         let src = "/api/attractions?page=" + page;
         const attractions = document.getElementById("attractions");
+        let isLoading = false;
 
         /* Create the intersection observer to sense if footer is in viewpoint, it means the end of page  */
         const pageEndObserver = new IntersectionObserver((entries) => {
@@ -51,6 +52,7 @@
                 return fetchAttractions(page, keyword);
             }
         });
+        /* Start to observe footer for loading next page */        
         pageEndObserver.observe(document.querySelector("footer"));
 
         /* For search by keyword */
@@ -75,10 +77,14 @@
             }else{
                 src = "/api/attractions?page=" + page + "&keyword=" + keyword;
             }
-            /* Fetch */
-            fetch(src).then((response) => {
-                return response.json();
-            }).then(renderAttractions);
+            /* Check if the page is loading, if no, fetching */
+            if(isLoading === false){
+                isLoading = true; /* Record that the page is loading */
+                /* Fetch */
+                fetch(src).then((response) => {
+                    return response.json();
+                }).then(renderAttractions);                
+            }
         }
         function renderAttractions(data){
             let attractionsData = data["data"];
@@ -119,7 +125,8 @@
             }
             /* Check if the last page */
             if(data["nextPage"] === null){
-                pageEndObserver.unobserve(document.querySelector("footer")); // 
+                /* Close the observer */
+                pageEndObserver.unobserve(document.querySelector("footer"));
             }else{
                 page = data["nextPage"];                
             }
@@ -129,6 +136,7 @@
             }else{
                 src = "/api/attractions?page=" + page + "&keyword=" + keyword;
             }
+            isLoading = false; /* After fetching, record the page is not loading for next fetching */
         }
 
         /* Fetch API to get all categories */
@@ -165,6 +173,7 @@
         function selectCategory(){
             let keyword = document.getElementById("keyword");
             keyword.value = this.textContent;
+            closeCategoriesMenu(); /* Close the menu with categories */
         }
     </script>
 </body>
