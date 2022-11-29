@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taipei Trip 台北一日遊 2.0</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
     <header>
@@ -20,14 +20,13 @@
     <main>
         <section class="hero-section">
             <div class="welcome">
-                <div class="slogan-header">輕鬆享受台北一日悠閒</div>
+                <div class="h1">輕鬆享受台北一日悠閒</div>
                 <div class="slogan">探索每個角落，體驗城市的深度旅遊行程</div>
                 <div class="search">
-                    <input type="text" placeholder="輸入景點名稱查詢" class="search-keyword" id="keyword" onclick="openCategoriesMenu()" /><img src="/icon_search.png" class="search-icon" onclick="searchAttractions()">
+                    <input type="text" placeholder="輸入景點名稱查詢" class="search-keyword" id="keyword" onclick="openCategoriesMenu()" /><img src="/img/icon_search.png" class="search-icon" onclick="searchAttractions()">
                     <div class="out-of-categories-menu" onclick="closeCategoriesMenu()"></div>
                     <div class="categories-menu">
-                        <div class="categories" id="categories">
-                        </div>
+                        <div class="categories" id="categories"></div>
                     </div>
                 </div>
             </div>
@@ -39,21 +38,27 @@
         <div>COPYRIGHT © 2021 台北一日遊</div>
     </footer>
     <script>
+        /* Get all elementes in DOM for JavaScript */
+        const categoriesMenu = document.querySelector(".categories-menu");
+        const outOfCategoriesMenu = document.querySelector(".out-of-categories-menu");        
+        const attractions = document.getElementById("attractions");
+        
         /* For fetching data of attractions from API, default setting is for window.load */
         let page = 0;
         let keyword = null;
         let src = "/api/attractions?page=" + page;
-        const attractions = document.getElementById("attractions");
-        let isLoading = false;
-
+        /* Check if fetching is on-going to avoid fetching before the previous fetching finished */
+        let isLoading = false; 
         /* Create the intersection observer to sense if footer is in viewpoint, it means the end of page  */
         const pageEndObserver = new IntersectionObserver((entries) => {
             if(entries[0].intersectionRatio > 0){
                 return fetchAttractions(page, keyword);
             }
         });
+
         /* Start to observe footer for loading next page */        
         pageEndObserver.observe(document.querySelector("footer"));
+        window.load = fetchCategories();
 
         /* For search by keyword */
         function searchAttractions(){
@@ -66,8 +71,6 @@
             /* Then re-add the observation */
             pageEndObserver.observe(document.querySelector("footer"));
         }
-
-        window.load = fetchCategories();
 
         /* Fetch data of attractions */
         function fetchAttractions(page, keyword){
@@ -95,13 +98,16 @@
                 for(let i = 0; i < attractionsData.length; i++){
                     let attraction = document.createElement("div");
                     attraction.className = "attraction";
-                    /* Create image of attraction */
+                     /* Create image of attraction with hyperlink */                    
+                    let imageLink = document.createElement("a");
+                    imageLink.setAttribute("href", "/attraction/" + attractionsData[i]["id"]);                 
                     let image = document.createElement("img");
-                    image.src = attractionsData[i]["images"][0];
+                    image.setAttribute("src", attractionsData[i]["images"][0]);
                     image.className = "attraction-img";
-                    attraction.appendChild(image);
-                    /* Create name of attraction */                
-                    let name = document.createElement("div"); 
+                    imageLink.appendChild(image);                    
+                    attraction.appendChild(imageLink);                    
+                    /* Create name of attraction */                   
+                    let name = document.createElement("div");
                     name.textContent =  attractionsData[i]["name"];
                     name.className = "attraction-name";               
                     attraction.appendChild(name);
@@ -158,14 +164,10 @@
         }
         /* Open and close categories menu */
         function openCategoriesMenu(){
-            let categoriesMenu = document.querySelector(".categories-menu");
-            let outOfCategoriesMenu = document.querySelector(".out-of-categories-menu");
             categoriesMenu.className = "categories-menu--open";
             outOfCategoriesMenu.style.display = "block";
         }
         function closeCategoriesMenu(){
-            let categoriesMenu = document.querySelector(".categories-menu--open");
-            let outOfCategoriesMenu = document.querySelector(".out-of-categories-menu");
             categoriesMenu.className = "categories-menu";
             outOfCategoriesMenu.style.display = "none";
         }
