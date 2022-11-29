@@ -3,23 +3,22 @@ body{
     font-family: 'Noto Sans TC', sans-serif;
     color: #666666;
 }
-.h1{
+.slogan-title{
     font-size: 28px;
-}
-.h2{
-    font-size: 30px;
-}
-.h3{
-    font-size: 24px;
     font-weight: bold;
 }
-p{
-    margin: 0px;
+.headline{
+    font-size: 30px;
+    font-weight: bold;
+}
+.dialog-title{
+    font-size: 24px;
+    font-weight: bold;
 }
 header{
     position: fixed;
     top: 0px;
-    z-index: 999;
+    z-index: 1030; /* On top */
     width: 100%;
     background: #ffffff;
     font-weight: bold;
@@ -33,7 +32,6 @@ nav{
 .logo{
     font-style: normal;
     font-size: 30px;
-    line-height: 1;
     color: #448899;
     padding: 12px 0px;
 }
@@ -62,6 +60,7 @@ main .title{
     gap: 30px;
     padding: 15px;
     justify-items: center;
+    margin-bottom: 25px;
 }
 
 .carousel-images{
@@ -124,7 +123,7 @@ main .title{
     height: 400px;
 }
 .profile{
-    margin: 15px 0px;
+    margin: 15px 0px 20px 0px;
 }
 
 /* booking form */
@@ -132,6 +131,7 @@ main .title{
     padding: 15px 20px 0px 20px;
     background-color: #E8E8E8;
     border-radius: 5px;
+    line-height: 1.5;
 }
 .booking div{
     margin-bottom: 15px;
@@ -148,6 +148,7 @@ main .title{
 .booking input[type="date"]{
     padding: 5px 10px;
     border: 0px;
+    font-size: 16px;
 }
 .booking .radio{
     display: inline-flex;
@@ -191,11 +192,13 @@ main .title{
     width: 100%;
 }
 .attraction-description-address-transport article{
+    line-height: 23px;
     margin: 20px auto;
 }
 .attraction-description-address-transport div{
     line-height: 2;
 }
+
 footer{
     display: flex;
     justify-content: center;
@@ -226,6 +229,7 @@ footer{
     .attraction-images-profile-booking{
         grid-template-columns: auto;
         padding: 0px;
+        overflow: hidden;
     }
     .carousel-images{
         height: 350px;
@@ -236,6 +240,9 @@ footer{
     }
     .profile-booking{
         width: 90%;
+    }
+    .hr-solid{
+        width: 100%;
     }
     .attraction-description-address-transport{
         width: 90%;
