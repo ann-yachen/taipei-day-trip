@@ -1,182 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taipei Trip 台北一日遊 2.0</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-</head>
-<body>
-    <header>
-        <nav>
-            <div class="logo">台北一日遊</div>
-            <ul>
-                <li>預定行程</li>
-                <li>登入/註冊</li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section class="hero-section">
-            <div class="welcome">
-                <div class="h1">輕鬆享受台北一日悠閒</div>
-                <div class="slogan">探索每個角落，體驗城市的深度旅遊行程</div>
-                <div class="search">
-                    <input type="text" placeholder="輸入景點名稱查詢" class="search-keyword" id="keyword" onclick="openCategoriesMenu()" /><img src="/img/icon_search.png" class="search-icon" onclick="searchAttractions()">
-                    <div class="out-of-categories-menu" onclick="closeCategoriesMenu()"></div>
-                    <div class="categories-menu">
-                        <div class="categories" id="categories"></div>
-                    </div>
-                </div>
+{% extends "base.html" %}
+
+{% block title %}Taipei Trip 台北一日遊 2.0{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/css/index.css">
+{% endblock %}
+
+{% block section %}
+<section class="hero-section">
+    <div class="hero-section__banner">
+        <div class="headline">輕鬆享受台北一日悠閒</div>
+        <div class="hero-section__slogan">探索每個角落，體驗城市的深度旅遊行程</div>
+        <div class="search">
+            <input type="text" placeholder="輸入景點名稱查詢" class="search__keyword" id="keyword" onclick="openCategoriesMenu()" />
+            <img src="/img/icon_search.png" class="search__search-icon" onclick="searchAttractions()">
+            <div class="out-of-categories-menu" onclick="closeCategoriesMenu()"></div>
+            <div class="categories-menu">
+                <div class="categories" id="categories"></div>
             </div>
-        </section>
-        <section class="attractions" id="attractions">
-        </section>
-    </main>
-    <footer>
-        <div>COPYRIGHT © 2021 台北一日遊</div>
-    </footer>
-    <script>
-        /* Get all elementes in DOM for JavaScript */
-        const categoriesMenu = document.querySelector(".categories-menu");
-        const outOfCategoriesMenu = document.querySelector(".out-of-categories-menu");        
-        const attractions = document.getElementById("attractions");
-        
-        /* For fetching data of attractions from API, default setting is for window.load */
-        let page = 0;
-        let keyword = null;
-        let src = "/api/attractions?page=" + page;
-        /* Check if fetching is on-going to avoid fetching before the previous fetching finished */
-        let isLoading = false; 
-        /* Create the intersection observer to sense if footer is in viewpoint, it means the end of page  */
-        const pageEndObserver = new IntersectionObserver((entries) => {
-            if(entries[0].intersectionRatio > 0){
-                return fetchAttractions(page, keyword);
-            }
-        });
+        </div>
+    </div>
+</section>
+<section class="attractions" id="attractions"></section>
+{% endblock %}
 
-        /* Start to observe footer for loading next page */        
-        pageEndObserver.observe(document.querySelector("footer"));
-        window.load = fetchCategories();
-
-        /* For search by keyword */
-        function searchAttractions(){
-            /* Reset page, set keyword and clear section for attractions*/
-            page = 0;
-            keyword = document.getElementById("keyword").value;
-            attractions.innerHTML = "";
-            /* If no scrolling before search, remove the observation when window load */
-            pageEndObserver.unobserve(document.querySelector("footer"));
-            /* Then re-add the observation */
-            pageEndObserver.observe(document.querySelector("footer"));
-        }
-
-        /* Fetch data of attractions */
-        function fetchAttractions(page, keyword){
-            /* Check if keyword exists */
-            if(keyword === null){
-                src = "/api/attractions?page=" + page;
-            }else{
-                src = "/api/attractions?page=" + page + "&keyword=" + keyword;
-            }
-            /* Check if the page is loading, if no, fetching */
-            if(isLoading === false){
-                isLoading = true; /* Record that the page is loading */
-                /* Fetch */
-                fetch(src).then((response) => {
-                    return response.json();
-                }).then(renderAttractions);                
-            }
-        }
-        function renderAttractions(data){
-            let attractionsData = data["data"];
-            /* If no attraction matches to keyword */
-            if(attractionsData.length == 0){
-                attractions.textContent = "沒有找到符合的景點，請重新輸入";
-            }else{
-                for(let i = 0; i < attractionsData.length; i++){
-                    let attraction = document.createElement("div");
-                    attraction.className = "attraction";
-                     /* Create image of attraction with hyperlink */                    
-                    let imageLink = document.createElement("a");
-                    imageLink.setAttribute("href", "/attraction/" + attractionsData[i]["id"]);                 
-                    let image = document.createElement("img");
-                    image.setAttribute("src", attractionsData[i]["images"][0]);
-                    image.className = "attraction-img";
-                    imageLink.appendChild(image);                    
-                    attraction.appendChild(imageLink);                    
-                    /* Create name of attraction */                   
-                    let name = document.createElement("div");
-                    name.textContent =  attractionsData[i]["name"];
-                    name.className = "attraction-name";               
-                    attraction.appendChild(name);
-                    /* Create infos of attraction */                
-                    let infos = document.createElement("div");
-                    infos.className = "attraction-infos";
-                    /* Add info: MRT */
-                    let mrt = document.createElement("div");
-                    mrt.textContent =  attractionsData[i]["mrt"];
-                    mrt.className = "attraction-mrt";
-                    infos.appendChild(mrt);
-                    /* Add info: category */
-                    let category = document.createElement("div");
-                    category.textContent =  attractionsData[i]["category"];
-                    category.className = "attraction-category";
-                    infos.appendChild(category);              
-                    attraction.appendChild(infos);
-                    /* Append all div into attraction */
-                    attractions.appendChild(attraction);                
-                }
-            }
-            /* Check if the last page */
-            if(data["nextPage"] === null){
-                /* Close the observer */
-                pageEndObserver.unobserve(document.querySelector("footer"));
-            }else{
-                page = data["nextPage"];                
-            }
-            /* For next page fetching */
-            if(keyword === null){
-                src = "/api/attractions?page=" + page;
-            }else{
-                src = "/api/attractions?page=" + page + "&keyword=" + keyword;
-            }
-            isLoading = false; /* After fetching, record the page is not loading for next fetching */
-        }
-
-        /* Fetch API to get all categories */
-        function fetchCategories(){
-            fetch("/api/categories").then((response) => {
-                return response.json();
-            }).then(getCategories);
-        }
-        function getCategories(data){
-            let categoriesData = data["data"];           
-            let categories = document.getElementById("categories");
-            for(let i = 0; i < categoriesData.length; i++){
-                let category = document.createElement("div");
-                category.textContent = categoriesData[i];
-                category.className = "category";
-                category.addEventListener("click", selectCategory); /* Add event to select category for keyword */
-                categories.appendChild(category);
-            }
-        }
-        /* Open and close categories menu */
-        function openCategoriesMenu(){
-            categoriesMenu.className = "categories-menu--open";
-            outOfCategoriesMenu.style.display = "block";
-        }
-        function closeCategoriesMenu(){
-            categoriesMenu.className = "categories-menu";
-            outOfCategoriesMenu.style.display = "none";
-        }
-        /* Put category into search box */
-        function selectCategory(){
-            let keyword = document.getElementById("keyword");
-            keyword.value = this.textContent;
-            closeCategoriesMenu(); /* Close the menu with categories */
-        }
-    </script>
-</body>
-</html>
+{% block script %}
+<script type="text/javascript", src="/js/attractions_index.js"></script>
+{% endblock %}
