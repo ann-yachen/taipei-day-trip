@@ -56,6 +56,7 @@ nav{
 .logo{
     color: #448899;
     padding: 12px 0px;
+    cursor: pointer;
 }
 nav ul{
     display: flex;

@@ -28,11 +28,17 @@ fetch(src).then((response) => {
     console.log(error);
 });
 function render(data){
-    let attractionData = data.data;
-    let attractionImages = data.data.images;
-    renderInfo(attractionData);
-    renderImages(attractionImages);
-    showImages(imageIndex);
+    if(data.error === true){
+        alert(data.message);
+        window.location.href="/";
+    }
+    else{
+        const attractionData = data.data;
+        const attractionImages = data.data.images;
+        renderInfo(attractionData);
+        renderImages(attractionImages);
+        showImages(imageIndex);        
+    }
 }
 
 /* Rendering attraction infos and images */

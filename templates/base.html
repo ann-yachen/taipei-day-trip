@@ -51,6 +51,10 @@
     <footer>
         <div>COPYRIGHT © 2021 台北一日遊</div>
     </footer>
+    <script>
+        const logo = document.querySelector(".logo");
+        logo.addEventListener("click", () => { window.location.href = "/"; }); // Back to homepage
+    </script>
     <script type="text/javascript", src="/js/user.js"></script>
     {% block script %}{% endblock %}
 </body>
