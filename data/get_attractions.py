@@ -27,7 +27,15 @@ try:
     cnxcursor = cnx.cursor()
     for attraction in attractions:    
         add_attraction = "INSERT INTO attractions(name, category, description, address, transport, mrt, lat, lng, images) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        attraction_data = (attraction["name"], attraction["CAT"], attraction["description"], attraction["address"].replace(" ", ""), attraction["direction"], attraction["MRT"], float(attraction["latitude"]), float(attraction["longitude"]), split_file(attraction["file"]))
+        attraction_data = (attraction["name"],
+                           attraction["CAT"],
+                           attraction["description"],
+                           attraction["address"].replace(" ", ""),
+                           attraction["direction"],
+                           attraction["MRT"],
+                           float(attraction["latitude"]),
+                           float(attraction["longitude"]),
+                           split_file(attraction["file"]))
         cnxcursor.execute(add_attraction, attraction_data)
         cnx.commit()
 except mysql.connector.Error as err:
