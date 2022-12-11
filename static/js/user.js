@@ -85,7 +85,7 @@ const UserModel = {
 /* UserView for rendering */
 const UserView = {
     showUserData: function(result){
-        if(result.data === null){
+        if(result.data === null || result.error === true){
             user.textContent = "登入/註冊";
             user.addEventListener("click", UserView.showModal);
         }else{

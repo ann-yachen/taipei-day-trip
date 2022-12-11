@@ -1,4 +1,4 @@
-from flask import *
+from flask import Blueprint, request
 from model.user import UserModel, UserAuthModel
 
 user_blueprint = Blueprint("user", __name__)

@@ -1,7 +1,6 @@
 from config.config import CNX_POOL, JWT_KEY
 
 from flask import make_response, jsonify
-import mysql.connector, mysql.connector.pooling
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt, datetime
 
@@ -27,9 +26,7 @@ class UserModel:
 
 class UserAuthModel:
     def get(token):
-        if token == None:
-            return jsonify({"data": None}), 200
-        else:
+        if token:
             decoded_token = jwt.decode(token, JWT_KEY, algorithms = "HS256")
             email = decoded_token["email"]
             try:
@@ -39,11 +36,15 @@ class UserAuthModel:
                 user = cnxcursor.fetchone()
                 if user:
                     return jsonify({"data": user}), 200
+                else:
+                    return jsonify({"error": True, "message": "Email 不正確"}), 400
             except:
                 return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
             finally:
                 cnxcursor.close()
                 cnx.close()
+        else:
+            return jsonify({"data": None}), 200
 
     def put(email, password):
         try:
