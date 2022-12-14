@@ -6,7 +6,7 @@
     margin-top: 54px;
     width: 100%;
     height: 320px;
-    background-image: url("/img/welcome.png"), linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
+    background-image: url("/img/index/welcome.png"), linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: left top;

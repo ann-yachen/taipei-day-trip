@@ -27,4 +27,3 @@ def user_auth():
     # Log out
     if request.method == "DELETE":
         return UserAuthModel.delete()
-

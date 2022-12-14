@@ -48,5 +48,3 @@ except mysql.connector.Error as err:
 finally:
     cnxcursor.close()
     cnx.close()
-
-
