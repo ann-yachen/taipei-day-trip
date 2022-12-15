@@ -1,3 +1,6 @@
+import * as User from "./user.js"
+User.UserController.init();
+
 /* For rendering of attractions */       
 const attractions = document.getElementById("attractions");
 /* For fetching data of attractions from API, default setting is for window.load */

@@ -1,5 +1,6 @@
-import { getUserStatus } from "./user.js" // Import UserModel.get
+import * as User from "./user.js"
 
+const welcomeMessage = document.querySelector(".booking__header");
 const welcomeUserName = document.getElementById("welcome-user-name");
 
 const booking = document.querySelector(".booking__body");
@@ -19,31 +20,21 @@ const contactEmail = document.getElementById("contact-email");
 const totalPrice = document.getElementById("total-price");
 
 const BookingModel = {
-    get: function(userData){
-        /* Check if user logged in or not in advance*/
-        if(userData.data === null){
-            window.location.href = "/"; // If not, go back to homepage
-        }else{ // If yes
-            /* Update user information to booking form */
-            welcomeUserName.textContent = userData.data.name;
-            contactName.value = userData.data.name;
-            contactEmail.value = userData.data.email;
-
-            /* Get booking by fetching */
-            (async () => {
-                try{
-                    const response = await fetch("/api/booking");
-                    const result = await response.json();
-                    if(result.error === true && response.status === 403){
-                        window.location.href = "/";
-                    }else{
-                        BookingView.showBooking(result);
-                    }
-                }catch(err){
-                    console.log(err);
+    get: function(){
+        /* Get booking by fetching */
+        (async () => {
+            try{
+                const response = await fetch("/api/booking");
+                const result = await response.json();
+                if(result.error === true && response.status === 403){
+                    window.location.href = "/";
+                }else{
+                    BookingView.showBooking(result);
                 }
-            })();            
-        }        
+            }catch(err){
+                console.log(err);
+            }
+        })();
     },
 
     delete: function(){
@@ -90,7 +81,21 @@ const BookingView = {
 const BookingController = {
     init: function(){
         bookingDeleteIcon.addEventListener("click", BookingController.deleteBooking);
-        getUserStatus(BookingModel.get);
+    },
+
+    /* Callback after getting user status  */
+    getBooking: function(result){
+        /* Check if user have logged in or not in advance */
+        if(result.data === null){
+            window.location.href = "/"; // If not, go back to homepage
+        }else{ // If yes
+            /* Update user information to booking form */
+            welcomeUserName.textContent = result.data.name;
+            welcomeMessage.style.display = "block";
+            contactName.value = result.data.name;
+            contactEmail.value = result.data.email;
+            BookingModel.get();
+        }
     },
 
     deleteBooking: function(){
@@ -98,6 +103,10 @@ const BookingController = {
     }
 }
 
+/* Init user features */
+User.UserController.init(BookingController.getBooking);
+
 BookingController.init();
+
 
 

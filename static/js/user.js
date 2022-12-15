@@ -38,13 +38,15 @@ const UserModel = {
         })();
     },
 
-    // get: function(){
     get: function(callback){
         (async () => {
             try{
                 const response = await fetch("/api/user/auth");
                 const result = await response.json();
-                callback(result);
+                UserView.showUserStatus(result);
+                if(callback !== undefined){ // If there is a callback
+                    callback(result); // Do something            
+                }
             }catch(err){
                 console.log(err);
             }
@@ -187,11 +189,11 @@ const UserView = {
 
 /* UserController for user function control */
 const UserController = {
-    init: function(){
+    init: function(callback){
         modalCloseIcon.addEventListener("click", UserView.closeModal);
         userActionButton.addEventListener("click", UserController.logIn);
         userActionSwitch.addEventListener("click", UserView.switchRegister);      
-        UserModel.get(UserView.showUserStatus); // Get user status
+        UserModel.get(callback); // Get user status then do something
     },
 
     register: function(){
@@ -212,8 +214,19 @@ const UserController = {
     }
 }
 
-UserController.init(); // When window.load
-
-const getUserStatus = UserModel.get;
-const showLoginModal = UserView.showModal;
-export { getUserStatus, showLoginModal };
+/* Export as module for nav and getting user status*/
+export {
+    currentPage,
+    userBooking,
+    user, 
+    modal,
+    modalCloseIcon, 
+    modalTitle, 
+    userActionButton,
+    userActionResult,
+    userActionMessage,
+    userActionSwitch,
+    UserModel,
+    UserView,
+    UserController 
+};

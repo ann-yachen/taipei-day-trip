@@ -1,3 +1,5 @@
+import * as User from "./user.js"
+
 /* ----------------- Render Attraction ----------------- */
 /* Get current URL to get attraction id for fetching */
 let currentURL = window.location.href;
@@ -18,7 +20,7 @@ const images = document.getElementById("carousel");
 let imageIndex = 0;
 
 /* Fetching attraction data by id */
- const AttractionModel = {
+const AttractionModel = {
     get: function(){
         (async () => {
             try{
@@ -28,7 +30,7 @@ let imageIndex = 0;
                 const attractionImages = result.data.images;
                 AttractionView.renderInfo(attractionData);
                 AttractionView.renderImages(attractionImages);
-                AttractionView.showImages(imageIndex);
+                AttractionView.showCarouselImages(imageIndex); // Change images as carousel
             }catch(err){
                 console.log(err);
             }
@@ -36,7 +38,7 @@ let imageIndex = 0;
     }
  }
 
- const AttractionView = {
+const AttractionView = {
     renderInfo: function(attractionData){
         pageTitle.textContent = attractionData.name;
         name.textContent = attractionData.name;
@@ -60,15 +62,17 @@ let imageIndex = 0;
         prev.setAttribute("src", "/img/attraction/btn_leftArrow.png");
         prev.className = "carousel-prev";
         /* Set attribute "image-plus" = -1 to show the previous image */
-        prev.setAttribute("image-plus", -1);          
-        prev.addEventListener("click", () => { plusImages(prev.getAttribute("image-plus")) }); // Add event by anonymous function for passing "image-plus"
+        prev.setAttribute("image-plus", -1);
+        /* Add event by anonymous function for passing "image-plus" */    
+        prev.addEventListener("click", () => { AttractionView.plusCarouselImages(prev.getAttribute("image-plus")) });
         images.appendChild(prev);
         let next = document.createElement("img");
         next.setAttribute("src", "/img/attraction/btn_rightArrow.png");
         next.className = "carousel-next";
         /* Set attribute "image-plus" = 1 to show the next image */
-        next.setAttribute("image-plus", 1);           
-        next.addEventListener("click", () => { plusImages(next.getAttribute("image-plus")) }); // Add event by anonymous function for passing "image-plus"
+        next.setAttribute("image-plus", 1);
+        /* Add event by anonymous function for passing "image-plus" */
+        next.addEventListener("click", () => { AttractionView.plusCarouselImages(next.getAttribute("image-plus")) });
         images.appendChild(next);
         /* Create indicators for carousel */            
         let indicators = document.createElement("ol");
@@ -78,25 +82,26 @@ let imageIndex = 0;
             indicator.className = "indicator";
             /* Set attribute "image-to" as an indicator to show which image */
             indicator.setAttribute("image-to", i);
-            indicator.addEventListener("click", () => { currentImage(indicator.getAttribute("image-to")) }); // Add event by anonymous function for passing "image-to"
+            /* Add event by anonymous function for passing "image-to" */
+            indicator.addEventListener("click", () => { AttractionView.currentCarouselImage(indicator.getAttribute("image-to")) });
             indicators.appendChild(indicator);
         }
         images.appendChild(indicators);
     },
 
     /* For prev/next button to show the previous/next image */
-    plusImages: function(n){
+    plusCarouselImages: function(n){
         imageIndex += parseInt(n);
-        showImages(imageIndex); // Pass imageIndex after changed
+        AttractionView.showCarouselImages(imageIndex); // Pass imageIndex after changed
     },
 
     /* For indicator to show the xth image */
-    currentImage: function(n){
+    currentCarouselImage: function(n){
         imageIndex = parseInt(n);
-        showImages(imageIndex); // Pass imageIndex after changed
+        AttractionView.showCarouselImages(imageIndex); // Pass imageIndex after changed
     },
 
-    showImages: function(n){
+    showCarouselImages: function(n){
         /* Get all images and indicators */
         let images = document.getElementsByClassName("carousel-image");
         let indicators = document.getElementsByClassName("indicator");
@@ -120,18 +125,16 @@ let imageIndex = 0;
         images[imageIndex].style.display = "block";  
         indicators[imageIndex].className += " active";       
     }
- }
+}
 
- const AttractionController = {
+const AttractionController = {
     init: function(){
         AttractionModel.get();
     }
- }
+}
 
- AttractionController.init();
-
- /* ----------------- Booking ----------------- */
-const userModal = document.querySelector(".user__modal");
+/* ----------------- Booking ----------------- */
+// const userModal = document.querySelector(".user__modal");
 
  /* Get elements for changing price */
 const timeMorning = document.getElementById("time-morning");
@@ -173,12 +176,19 @@ const BookingAttractionView = {
         }
     },
 
+    /* Callback after getting user status */
+    switchBooking: function(result){
+        /* Check if user have logged in or not in advance */
+        if(result.data === null || result.error === true){
+            bookingButton.addEventListener("click", User.UserView.showModal); // If not, need to log in in advance
+        }else{
+            bookingButton.addEventListener("click", BookingAttractionController.booking);
+        }
+    },
+
     showBookingStatus: function(result){
         if(result.ok === true){
             window.location.href = "/booking";
-        }
-        else{
-            userModal.style.display = "block";
         }
     }
 }
@@ -187,7 +197,6 @@ const BookingAttractionController = {
     init: function(){
         timeMorning.addEventListener("click", BookingAttractionView.changePrice);
         timeAfternoon.addEventListener("click", BookingAttractionView.changePrice);
-        bookingButton.addEventListener("click", BookingAttractionController.booking);
     },
 
     booking: function(){
@@ -205,4 +214,9 @@ const BookingAttractionController = {
     }
 }
 
+/* Init user features */
+User.UserController.init(BookingAttractionView.switchBooking);
+
+AttractionController.init();
 BookingAttractionController.init();
+

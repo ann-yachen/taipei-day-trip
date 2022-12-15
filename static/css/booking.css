@@ -25,6 +25,7 @@ main{
     box-sizing: border-box;
 }
 .booking__header{
+    display: none;
     margin: 35px 0px;
 }
 .booking__body--none{
