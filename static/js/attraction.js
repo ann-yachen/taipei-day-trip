@@ -1,6 +1,6 @@
 import * as User from "./user.js"
 
-/* ----------------- Render Attraction ----------------- */
+/* ================= Render Attraction ================= */
 /* Get current URL to get attraction id for fetching */
 let currentURL = window.location.href;
 let attractionId = currentURL.split("/")[4]; // ['https', '', '<ip>', 'attraction', '<id>']
@@ -133,9 +133,7 @@ const AttractionController = {
     }
 }
 
-/* ----------------- Booking ----------------- */
-// const userModal = document.querySelector(".user__modal");
-
+/* ================= Attraction Booking ================ */
  /* Get elements for changing price */
 const timeMorning = document.getElementById("time-morning");
 const timeAfternoon = document.getElementById("time-afternoon");
@@ -217,6 +215,7 @@ const BookingAttractionController = {
 /* Init user features */
 User.UserController.init(BookingAttractionView.switchBooking);
 
+/* Init attraction and booking features */
 AttractionController.init();
 BookingAttractionController.init();
 

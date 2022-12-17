@@ -25,12 +25,12 @@ button{
 }
 
 /* Headline */
-.slogan-title{
-    font-size: 28px;
-    font-weight: bold;
-}
 .headline{
     font-size: 30px;
+    font-weight: bold;
+}
+.slogan-title{
+    font-size: 28px;
     font-weight: bold;
 }
 .dialog-title{

@@ -8,6 +8,7 @@ class BookingModel():
             cnxcursor = cnx.cursor(dictionary = True)
             cnxcursor.execute("SELECT * FROM booking WHERE user_id=%s", (id, ))
             booking = cnxcursor.fetchone()
+            # If booking exists
             if booking:
                 attraction_id = booking["attraction_id"]
                 sql = (

@@ -5,6 +5,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from model.jwt import JWTAuthModel
 
+# def getUserData(email):
+#     def wrapper(*args, **kwargs):
+#         try:
+#             cnx = CNX_POOL.get_connection()
+#             cnxcursor = cnx.cursor(dictionary = True)
+#             cnxcursor.execute("SELECT email FROM user WHERE email=%s", (email,))
+#             user = cnxcursor.fetchone()
+#             return
+#             return user
+#         except:
+#             return {"error": True, "message": "伺服器內部錯誤"}, 500
+#         finally:
+#             cnxcursor.close()
+#             cnx.close()
+#         return wrapper
+
 class UserModel:
     def post(name, email, password):
         try:
@@ -12,12 +28,13 @@ class UserModel:
             cnxcursor = cnx.cursor(dictionary = True)
             cnxcursor.execute("SELECT email FROM user WHERE email=%s", (email,))
             user = cnxcursor.fetchone()
+            # Check if user exits
             if user:
                 return {"error": True, "message": "註冊失敗，重複的 Email 或其他原因"}, 400
             else:
                 hashed_password = generate_password_hash(password)
                 cnxcursor.execute("INSERT INTO user(name, email, password) VALUE(%s, %s, %s)", (name, email, hashed_password))
-                cnx.commit()
+                cnx.commit()              
                 return {"ok": True}
         except:
             return {"error": True, "message": "伺服器內部錯誤"}, 500

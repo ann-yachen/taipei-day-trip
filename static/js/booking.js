@@ -7,6 +7,7 @@ const booking = document.querySelector(".booking__body");
 const bookingDeleteIcon = document.querySelector(".booking__body__delete-icon");
 const bookingNone = document.querySelector(".booking__body--none");
 
+/* Get elements to render booking info */
 const image = document.getElementById("image");
 const name = document.getElementById("name");
 const date = document.getElementById("date");
@@ -59,7 +60,7 @@ const BookingView = {
             bookingNone.style.display = "block";
         }
         else{
-            let attractionImage = document.createElement("img");
+            const attractionImage = document.createElement("img");
             attractionImage.setAttribute("src", result.data.attraction.image);
             attractionImage.className = "attraction-img";
             image.appendChild(attractionImage);
@@ -106,6 +107,7 @@ const BookingController = {
 /* Init user features */
 User.UserController.init(BookingController.getBooking);
 
+/* Init booking features */
 BookingController.init();
 
 
