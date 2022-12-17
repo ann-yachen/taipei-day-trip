@@ -183,12 +183,13 @@ const CategoriesView = {
         }
     },
 
-    openCategories: function(){
+    openCategoriesMenu: function(){
         categoriesMenu.className = "search__categories--open";
         outOfCategoriesMenu.style.display = "block";
+        outOfCategoriesMenu.addEventListener("click", CategoriesView.closeCategoriesMenu);
     },
 
-    closeCategories: function(){
+    closeCategoriesMenu: function(){
         categoriesMenu.className = "search__categories";
         outOfCategoriesMenu.style.display = "none";
     }
@@ -197,12 +198,12 @@ const CategoriesView = {
 const CategoriesController = {
     init: function(){
         CategoriesModel.get(); // Get categories by fetching API
-        searchKeyword.addEventListener("click", CategoriesView.openCategories);
+        searchKeyword.addEventListener("click", CategoriesView.openCategoriesMenu);
     },
 
     selectCategory: function(){
         searchKeyword.value = this.textContent;
-        CategoriesView.closeCategories();
+        CategoriesView.closeCategoriesMenu();
     }
 }
 

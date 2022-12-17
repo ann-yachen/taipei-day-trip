@@ -140,6 +140,7 @@ const timeAfternoon = document.getElementById("time-afternoon");
 
  /* Get elements for booking */
 const bookingButton = document.getElementById("booking-btn");
+const dateError = document.getElementById("date-error");
 
 const BookingAttractionModel = {
     post: function(attractionId, date, time, price){
@@ -208,7 +209,11 @@ const BookingAttractionController = {
             }
         }
         let price = document.getElementById("price").textContent;
-        BookingAttractionModel.post(attractionId, date, time, price);
+        if(date === ""){
+            dateError.textContent = "請選擇日期";
+        }else{
+            BookingAttractionModel.post(attractionId, date, time, price);            
+        }
     }
 }
 

@@ -2,7 +2,7 @@ from config.config import CNX_POOL
 import datetime
 
 class BookingModel():
-    def get(id):
+    def get_booking_by_id(id):
         try:
             cnx = CNX_POOL.get_connection()
             cnxcursor = cnx.cursor(dictionary = True)
@@ -37,7 +37,7 @@ class BookingModel():
             cnxcursor.close()
             cnx.close()
 
-    def post(id, attraction_id, date, time, price):
+    def create_booking(id, attraction_id, date, time, price):
         try:
             cnx = CNX_POOL.get_connection()
             cnxcursor = cnx.cursor(dictionary = True)
@@ -69,7 +69,7 @@ class BookingModel():
             cnxcursor.close()
             cnx.close()
 
-    def delete(id):
+    def delete_booking(id):
         try:
             cnx = CNX_POOL.get_connection()
             cnxcursor = cnx.cursor(dictionary = True)

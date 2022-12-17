@@ -8,14 +8,14 @@
 
 {% block section %}
 <section class="attraction__top">
-    <div class="attraction__carousel" id="carousel"></div>
+    <div class="carousel" id="carousel"></div>
     <div class="profile-booking">
         <div class="dialog-title" id="name"></div>
         <div class="profile"><span id="category"></span> at <span id="mrt"></span></div>
         <div class="booking">
             <div><span class="title">訂購導覽行程</span></div>
             <div><p>以此景點為中心的一日行程，帶您探索城市角落故事</p></div>
-            <div><span class="title">選擇日期：</span><input type="date" placeholder="yyyy/mm/dd" id="date" /></div>
+            <div><span class="title">選擇日期：</span><input type="date" placeholder="yyyy/mm/dd" id="date" /><span id="date-error" class="date--error"></span></div>
             <div>
                 <span class="title">選擇時間：</span>
                 <label for="time-morning" class="radio">
@@ -30,12 +30,12 @@
             <div>
                 <span class="title">導覽費用：</span>新台幣 <span id="price">2000</span> 元
             </div>
-            <button id="booking-btn">開始預約行程</button>                    
+            <button id="booking-btn">開始預約行程</button>
         </div>
     </div>
 </section>
 <hr class="hr-solid" />
-<section class="attraction-description-address-transport">
+<section class="attraction__bottom">
     <article>
         <p id="description"></p>
     </article>

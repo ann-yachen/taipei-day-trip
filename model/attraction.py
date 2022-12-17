@@ -7,7 +7,17 @@ class Attraction:
 		# Check if keyword exists for different sql query setting
 		if keyword == None:
 			sql = (
-				"SELECT id, name, category, description, address, transport, mrt, lat, lng, GROUP_CONCAT(images) AS images "
+				"SELECT "
+					"id, "
+					"name, "
+					"category, "
+					"description, "
+					"address, "
+					"transport, "
+					"mrt, "
+					"lat, "
+					"lng, "
+					"GROUP_CONCAT(images) AS images "
 				"FROM attractions "
 				"INNER JOIN attraction_images "
 				"ON attractions.id=attraction_images.attraction_id "
@@ -17,7 +27,17 @@ class Attraction:
 			par = (offset, item_per_page + 1) # Get all rows of this page and the 1st row of next page
 		else:
 			sql = (
-				"SELECT id, name, category, description, address, transport, mrt, lat, lng, GROUP_CONCAT(images) AS images "
+				"SELECT "
+					"id, "
+					"name, "
+					"category, "
+					"description, "
+					"address, "
+					"transport, "
+					"mrt, "
+					"lat, "
+					"lng, "
+					"GROUP_CONCAT(images) AS images "
 				"FROM attractions "
 				"INNER JOIN attraction_images "
 				"ON attractions.id=attraction_images.attraction_id "
@@ -52,7 +72,17 @@ class Attraction:
 			cnx = CNX_POOL.get_connection()
 			cnxcursor = cnx.cursor(dictionary = True)
 			sql = (
-				"SELECT id, name, category, description, address, transport, mrt, lat, lng, GROUP_CONCAT(images) AS images "
+				"SELECT "
+					"id, "
+					"name, "
+					"category, "
+					"description, "
+					"address, "
+					"transport, "
+					"mrt, "
+					"lat, "
+					"lng, "
+					"GROUP_CONCAT(images) AS images "
 				"FROM attractions "
 				"INNER JOIN attraction_images "
 				"ON attractions.id=attraction_images.attraction_id "
@@ -62,7 +92,6 @@ class Attraction:
 			par = (attractionId, )
 			cnxcursor.execute(sql, par)
 			attraction_data = cnxcursor.fetchone()
-			print(attraction_data)
 			if attraction_data:
 				attraction_data["images"] = attraction_data["images"].split(",")				
 				return jsonify({"data": attraction_data}), 200

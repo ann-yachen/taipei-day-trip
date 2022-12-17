@@ -14,12 +14,12 @@ def booking():
         try:
             cnx = CNX_POOL.get_connection()
             cnxcursor = cnx.cursor(dictionary = True)
-            cnxcursor.execute("SELECT id, name, email FROM user WHERE email=%s", (email,))
+            cnxcursor.execute("SELECT id, name, email FROM user WHERE email=%s", (email, ))
             user = cnxcursor.fetchone()
             if user:
                 if request.method == "GET":
                     id = user["id"]
-                    return BookingModel.get(id)
+                    return BookingModel.get_booking_by_id(id)
 
                 if request.method == "POST":
                     id = user["id"]
@@ -27,11 +27,11 @@ def booking():
                     date = request.json["date"]
                     time = request.json["time"]
                     price = request.json["price"]
-                    return BookingModel.post(id, attraction_id, date, time, price) 
+                    return BookingModel.create_booking(id, attraction_id, date, time, price) 
                 
                 if request.method == "DELETE":
                     id = user["id"]
-                    return BookingModel.delete(id)
+                    return BookingModel.delete_booking(id)
             else:
                 return {"error": True, "message": "Email 不正確"}, 400           
         except:

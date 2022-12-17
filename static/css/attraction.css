@@ -1,17 +1,17 @@
 p { line-height: 1.5; }
-.title{
+.title {
     font-weight: bold;
     line-height: 22px;
 }
 
 /* Main area for attraction information */
-main{
+main {
     width: 1200px;
     margin: 76px auto;
 }
 
 /* Top area for carousel images, profile and booking form*/
-.attraction__top{
+.attraction__top {
     display: grid;
     grid-template-columns: 0.9fr 1fr;
     gap: 30px;
@@ -19,20 +19,20 @@ main{
     justify-items: center;
     margin-bottom: 25px;
 }
-.attraction__carousel{
+.carousel {
     width: 100%;
     height: 400px;
     position: relative;
 }
-.attraction__carousel img{
+.carousel img {
     width: 100%;
     height: 400px;
     border-radius: 5px;
 }
-.attraction__carousel .carousel-image{
+.carousel .carousel-image {
     object-fit: cover;
 }
-.attraction__carousel .carousel-prev{
+.carousel .carousel-prev {
     position: absolute;
     top: 50%;
     left: 10px;
@@ -44,7 +44,7 @@ main{
     cursor: pointer;
     transform: translate(0, -50%); /* shift vertical center */
 }
-.attraction__carousel .carousel-next{
+.carousel .carousel-next {
     position: absolute;
     top: 50%;
     right: 10px;
@@ -56,14 +56,15 @@ main{
     cursor: pointer;
     transform: translate(0, -50%); /* shift vertical center */
 }
-.attraction__carousel .carousel-indicators{
+.carousel .carousel-indicators {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     position: absolute;
     bottom: 0px;
-    width: 100%;        
+    width: 100%;
 }
-.attraction__carousel .indicator{
+.carousel .indicator {
     height: 12px;
     width: 12px;
     margin: 12px 6px;
@@ -71,45 +72,48 @@ main{
     border: 1px solid #ffffff;
     border-radius: 50%;
     opacity: 75%;
-    cursor: default;
+    cursor: pointer;
 }
-.attraction__carousel .carousel-indicators .active, .indicator:hover{
+.carousel .carousel-indicators .active, .indicator:hover {
     background-color: #000000;    
 }
-.profile-booking{
+.profile-booking {
     width: 100%;
     height: 400px;
 }
-.profile{
+.profile {
     margin: 15px 0px 20px 0px;
 }
-
 /* booking form */
-.booking{
+.booking {
     padding: 15px 20px 0px 20px;
     background-color: #E8E8E8;
     border-radius: 5px;
     line-height: 1.5;
 }
-.booking div{
+.booking div {
     margin-bottom: 15px;
 }
-.booking input[type="date"]{
+.booking input[type="date"] {
+    border-radius: 0px;
     padding: 5px 10px;
-    border: 0px;
-    font-size: 16px;
 }
-.booking .radio{
+.booking .date--error {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #000000;
+}
+.booking .radio {
     display: inline-flex;
     align-items: center;
     margin-right: 10px;
     cursor: pointer;
     vertical-align: text-top;
 }
-.booking .radio-input{
+.booking .radio-input {
     display: none;
 }
-.booking .radio-custom{
+.booking .radio-custom {
     width: 18px;
     height: 18px;
     background-color: #ffffff;
@@ -117,7 +121,7 @@ main{
     box-sizing: border-box;
     padding: 2px;
 }
-.booking .radio-custom::after{
+.booking .radio-custom::after {
     content: "";
     width: 100%;
     height: 100%;
@@ -126,62 +130,64 @@ main{
     border-radius: 50%;
     transform: scale(0);
 }
-.booking .radio-input:checked + .radio-custom::after{
+.booking .radio-input:checked + .radio-custom::after {
     transform: scale(1);    
 }
-.booking button{
+.booking button {
     margin: 10px 0px 40px 0px;
+    cursor: pointer;
 }
 
-.hr-solid{
+.hr-solid {
     width: 100%;
     border: 0px;
     border-top: 1px solid #E8E8E8;
     margin: auto;
 }
-.attraction-description-address-transport{
+
+.attraction__bottom {
     margin: 50px auto;
     width: 100%;
 }
-.attraction-description-address-transport article{
+.attraction__bottom article {
     margin: 20px auto;
 }
-.attraction-description-address-transport div{
+.attraction__bottom div {
     line-height: 2;
 }
 
 /* CSS media query */
 /* 600px < size <= 1200px */ 
-@media screen and (max-width: 1200px){
-    main{
+@media screen and (max-width: 1200px) {
+    main {
         width: 90%;
     }
 }
 /* Mobile: 360px < size <= 600x */ 
-@media screen and (max-width: 600px){
-    main{
+@media screen and (max-width: 600px) {
+    main {
         width: 100%;
         margin: 54px auto;
     }
-    .attraction__top{
+    .attraction__top {
         grid-template-columns: auto;
         padding: 0px;
         overflow: hidden;
     }
-    .attraction__carousel{
+    .carousel {
         height: 350px;
     }
-    .attraction__carousel img{
+    .carousel img {
         height: 350px;
         border-radius: 0px;      
     }
-    .profile-booking{
+    .profile-booking {
         width: 90%;
     }
-    .hr-solid{
+    .hr-solid {
         width: 90%;
     }
-    .attraction-description-address-transport{
+    .attraction__bottom {
         width: 90%;
     }
 }
