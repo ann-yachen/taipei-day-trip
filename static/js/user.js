@@ -1,4 +1,7 @@
-let currentPage = window.location.href; // Get URL of current page
+const currentPage = window.location.href; // Get URL of current page
+
+/* Booking */
+const userBooking = document.getElementById("user-booking");
 
 /* User modal */
 const user = document.getElementById("user");
@@ -30,19 +33,22 @@ const UserModel = {
                 const result = await response.json();
                 UserView.showMessage(result, "register");                
             }catch(err){
-                console.log("error");
+                console.log(err);
             }
         })();
     },
 
-    get: function(){
+    get: function(callback){
         (async () => {
             try{
                 const response = await fetch("/api/user/auth");
                 const result = await response.json();
-                UserView.showUserData(result);              
+                UserView.showUserStatus(result);
+                if(callback !== undefined){ // If there is a callback
+                    callback(result); // Do something            
+                }
             }catch(err){
-                console.log("error");
+                console.log(err);
             }
         })();
     },
@@ -62,7 +68,7 @@ const UserModel = {
                 const result = await response.json();
                 UserView.showMessage(result, "logIn");                 
             }catch(err){
-                console.log("error");                
+                console.log(err);                
             }
            
         })();
@@ -76,7 +82,7 @@ const UserModel = {
                 const result = await response.json();
                 UserView.showMessage(result, "logOut");                
             }catch(err){
-                console.log("error");
+                console.log(err);
             }
         })();
     }
@@ -84,13 +90,16 @@ const UserModel = {
 
 /* UserView for rendering */
 const UserView = {
-    showUserData: function(result){
-        if(result.data === null){
+    showUserStatus: function(result){
+        if(result.data === null || result.error === true){
             user.textContent = "登入/註冊";
             user.addEventListener("click", UserView.showModal);
+            userBooking.addEventListener("click", UserView.showModal);
         }else{
+            userData = result;
             user.textContent = "登出系統";
             user.addEventListener("click", UserController.logOut);
+            userBooking.addEventListener("click", UserView.redirectBooking);
         }
     },
 
@@ -171,16 +180,20 @@ const UserView = {
 
     reloadPage: function(){
         window.location.href = currentPage;
+    },
+
+    redirectBooking: function(){
+        window.location.href = "/booking";
     }
 }
 
 /* UserController for user function control */
 const UserController = {
-    init: function(){
+    init: function(callback){
         modalCloseIcon.addEventListener("click", UserView.closeModal);
         userActionButton.addEventListener("click", UserController.logIn);
-        userActionSwitch.addEventListener("click", UserView.switchRegister);        
-        UserModel.get(); // Get user status
+        userActionSwitch.addEventListener("click", UserView.switchRegister);      
+        UserModel.get(callback); // Get user status then do something
     },
 
     register: function(){
@@ -201,4 +214,19 @@ const UserController = {
     }
 }
 
-UserController.init(); // When window.load
+/* Export as module for nav and getting user status*/
+export {
+    currentPage,
+    userBooking,
+    user, 
+    modal,
+    modalCloseIcon, 
+    modalTitle, 
+    userActionButton,
+    userActionResult,
+    userActionMessage,
+    userActionSwitch,
+    UserModel,
+    UserView,
+    UserController 
+};

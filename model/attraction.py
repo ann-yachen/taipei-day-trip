@@ -6,21 +6,54 @@ class Attraction:
 	def attractions(page, keyword, item_per_page, offset):
 		# Check if keyword exists for different sql query setting
 		if keyword == None:
-			sql = "SELECT * FROM attractions LIMIT %s, %s"
+			sql = (
+				"SELECT "
+					"id, "
+					"name, "
+					"category, "
+					"description, "
+					"address, "
+					"transport, "
+					"mrt, "
+					"lat, "
+					"lng, "
+					"GROUP_CONCAT(images) AS images "
+				"FROM attractions "
+				"INNER JOIN attraction_images "
+				"ON attractions.id=attraction_images.attraction_id "
+				"GROUP BY id, name, category, description, address, transport, mrt, lat, lng "
+				"LIMIT %s, %s"
+			)
 			par = (offset, item_per_page + 1) # Get all rows of this page and the 1st row of next page
 		else:
-			sql = "SELECT * FROM attractions WHERE category=%s OR name LIKE %s LIMIT %s, %s"
+			sql = (
+				"SELECT "
+					"id, "
+					"name, "
+					"category, "
+					"description, "
+					"address, "
+					"transport, "
+					"mrt, "
+					"lat, "
+					"lng, "
+					"GROUP_CONCAT(images) AS images "
+				"FROM attractions "
+				"INNER JOIN attraction_images "
+				"ON attractions.id=attraction_images.attraction_id "
+				"WHERE category=%s OR name LIKE %s "
+				"GROUP BY id, name, category, description, address, transport, mrt, lat, lng "
+				"LIMIT %s, %s"
+			)
 			par = (keyword, "%" + keyword + "%", offset, item_per_page + 1) # Get all rows of this page and the 1st row of next page
 		try:
 			cnx = CNX_POOL.get_connection()
 			cnxcursor = cnx.cursor(dictionary = True)
 			cnxcursor.execute(sql, par)
 			attractions = cnxcursor.fetchall()
-			# Change the value of "images" into a list
+			# Change images to a list
 			for attraction in attractions:
-				images = attraction["images"].split(" ")
-				images.pop() # Remove the last space
-				attraction["images"] = images
+				attraction["images"] = attraction["images"].split(",")
 			# Check if there is the last page by getting number of attractions
 			if len(attractions) > 12:
 				next_page = page + 1
@@ -38,12 +71,29 @@ class Attraction:
 		try:
 			cnx = CNX_POOL.get_connection()
 			cnxcursor = cnx.cursor(dictionary = True)
-			cnxcursor.execute("SELECT * FROM attractions WHERE id =%s", (attractionId, ))
+			sql = (
+				"SELECT "
+					"id, "
+					"name, "
+					"category, "
+					"description, "
+					"address, "
+					"transport, "
+					"mrt, "
+					"lat, "
+					"lng, "
+					"GROUP_CONCAT(images) AS images "
+				"FROM attractions "
+				"INNER JOIN attraction_images "
+				"ON attractions.id=attraction_images.attraction_id "
+				"WHERE id=%s"
+				"GROUP BY id, name, category, description, address, transport, mrt, lat, lng "
+			)
+			par = (attractionId, )
+			cnxcursor.execute(sql, par)
 			attraction_data = cnxcursor.fetchone()
 			if attraction_data:
-				images = attraction_data["images"].split(" ")
-				images.pop() # Remove the last space
-				attraction_data["images"] = images
+				attraction_data["images"] = attraction_data["images"].split(",")				
 				return jsonify({"data": attraction_data}), 200
 			# If id is not found
 			else:
@@ -59,7 +109,12 @@ class Category:
 		try:
 			cnx = CNX_POOL.get_connection()
 			cnxcursor = cnx.cursor()
-			cnxcursor.execute("SELECT DISTINCT category FROM attractions")
+			sql = (
+				"SELECT category "
+				"FROM attractions "
+				"GROUP BY category"
+			)
+			cnxcursor.execute(sql)
 			categories = [category[0] for category in cnxcursor.fetchall()] # Change a tuple from fetchall to a list
 			return jsonify({"data": categories}), 200
 		except:

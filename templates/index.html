@@ -9,13 +9,12 @@
 {% block section %}
 <section class="hero-section">
     <div class="hero-section__banner">
-        <div class="headline">輕鬆享受台北一日悠閒</div>
+        <div class="hero-section__title headline">輕鬆享受台北一日悠閒</div>
         <div class="hero-section__slogan">探索每個角落，體驗城市的深度旅遊行程</div>
         <div class="search">
-            <input type="text" placeholder="輸入景點名稱查詢" class="search__keyword" id="keyword" onclick="openCategoriesMenu()" />
-            <img src="/img/icon_search.png" class="search__search-icon" onclick="searchAttractions()">
-            <div class="out-of-categories-menu" onclick="closeCategoriesMenu()"></div>
-            <div class="categories-menu">
+            <input type="text" placeholder="輸入景點名稱查詢" class="search__keyword" id="keyword" /><img src="/img/index/icon_search.png" class="search__search-icon" id="search">
+            <div class="search__categories-close"></div>
+            <div class="search__categories">
                 <div class="categories" id="categories"></div>
             </div>
         </div>
@@ -25,5 +24,5 @@
 {% endblock %}
 
 {% block script %}
-<script type="text/javascript", src="/js/attractions_index.js"></script>
+<script type="module", src="/js/index.js"></script>
 {% endblock %}

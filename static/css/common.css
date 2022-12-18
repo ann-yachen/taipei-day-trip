@@ -1,21 +1,25 @@
-body{
+* { box-sizing: border-box; }
+
+body {
     font-size: 16px;
     font-family: 'Noto Sans TC', sans-serif;
     color: #666666;
 }
-a, a:visited, a:hover, a:active{
+a, a:visited, a:hover, a:active {
     text-decoration: none;
     color: #666666;    
 }
-input[type="text"], input[type="email"], input[type="password"]{
-    padding: 15px;
-    box-sizing: border-box;
+input {
     font-size: 16px;
     font-weight: bold;
-    border: none;
-    vertical-align: bottom;
+    line-height: 18px;
+    padding: 15px;
+    border: 0px;
+    border-radius: 5px;
+    vertical-align: middle;
 }
-button{
+input:focus { outline: none; }
+button {
     background-color: #448899;
     font-size: 19px;
     color: #ffffff;
@@ -25,21 +29,21 @@ button{
 }
 
 /* Headline */
-.slogan-title{
-    font-size: 28px;
-    font-weight: bold;
-}
-.headline{
+.headline {
     font-size: 30px;
     font-weight: bold;
 }
-.dialog-title{
+.slogan-title {
+    font-size: 28px;
+    font-weight: bold;
+}
+.dialog-title {
     font-size: 24px;
     font-weight: bold;
 }
 
 /* Navigation */
-header{
+header {
     position: fixed;
     top: 0px;
     z-index: 1030; /* On top */
@@ -47,18 +51,18 @@ header{
     background: #ffffff;
     font-weight: bold;
 }
-nav{
+nav {
     display: flex;
     justify-content: space-between;
     width: 1200px;
     margin: auto; /* center horizontally */
 }
-.logo{
+.logo {
     color: #448899;
     padding: 12px 0px;
     cursor: pointer;
 }
-nav ul{
+nav ul {
     display: flex;
     list-style-type: none;
 }
@@ -68,10 +72,10 @@ nav ul li{
 }
 
 /* Modal for sign-in and sign-up */
-.user__modal{
+.user__modal {
     display: none;
 }
-.user__modal-fade{
+.user__modal-fade {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -82,7 +86,7 @@ nav ul li{
     opacity: 0.25;
     overflow: hidden;
 }
-.user__modal-dialog{
+.user__modal-dialog {
     position: absolute;
     top: 80px;
     left: 50%;
@@ -94,41 +98,43 @@ nav ul li{
     border-radius: 5px;
     text-align: center;
 }
-.user__modal-banner{
+.user__modal-banner {
     height: 10px;
     background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
     border-radius: 5px 5px 0px 0px;
 }
-.user__modal-content{
+.user__modal-content {
     padding: 15px;
 }
-.user__modal-header{
+.user__modal-header {
     position: relative;
     margin-bottom: 15px;
 }
-.user__modal__close-icon{
+.user__modal__close-icon {
     position: absolute;
     top: 2px;
     right: 2px;
     cursor: pointer;
 }
-.user__modal-body input{
+.user__modal-body input {
     width: 100%;
-    border-radius: 5px;
     border: 1px solid #cccccc;
 }
-.user__modal-body button{
+.user__modal-body button {
     width: 100%;
+    cursor: pointer;
 }
-.user__modal-body .user-action-result--ok{
+.user__modal-body .user-action-result--ok {
+    font-size: 14px;
     color: #448899;
 }
-.user__modal-body .user-action-result--error{
+.user__modal-body .user-action-result--error {
+    font-size: 14px;
     color: #000000;
 }
 
 /* Footer */
-footer{
+footer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -140,14 +146,20 @@ footer{
 
 /* CSS media query */
 /* 600px < size <= 1200px */ 
-@media screen and (max-width: 1200px){
+@media screen and (max-width: 1200px) {
     nav{
-        width: 90%;
+        width: 100%;
+    }
+    .logo{
+        margin-left: 10px;
     }
 }
 /* Mobile: 360px < size <= 600px */ 
-@media screen and (max-width: 600px){
+@media screen and (max-width: 600px) {
     nav{
-        width: 90%;
+        width: 100%;
+    }
+    .logo{
+        margin-left: 10px;
     }
 }
