@@ -18,20 +18,22 @@ def booking():
             user = cnxcursor.fetchone()
             if user:
                 if request.method == "GET":
-                    id = user["id"]
-                    return BookingModel.get_booking_by_id(id)
+                    user_id = user["id"]
+                    return BookingModel.get_booking(user_id)
 
                 if request.method == "POST":
-                    id = user["id"]
+                    user_id = user["id"]
                     attraction_id = request.json["attractionId"]
                     date = request.json["date"]
                     time = request.json["time"]
-                    price = request.json["price"]
-                    return BookingModel.create_booking(id, attraction_id, date, time, price) 
+                    price = 2000 # Price for morning
+                    if time == "afternoon":
+                        price = 2500
+                    return BookingModel.create_booking(user_id, attraction_id, date, time, price) 
                 
                 if request.method == "DELETE":
-                    id = user["id"]
-                    return BookingModel.delete_booking(id)
+                    user_id = user["id"]
+                    return BookingModel.delete_booking(user_id)
             else:
                 return {"error": True, "message": "Email 不正確"}, 400           
         except:

@@ -1,0 +1,13 @@
+main {
+    width: 1200px;
+    margin: 100px auto;
+}
+
+.thankyou div {
+    text-align: center;
+    line-height: 1.5;
+}
+.order-number {
+    margin: 50px auto;
+    color: #448899;
+}

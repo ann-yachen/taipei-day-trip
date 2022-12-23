@@ -1,4 +1,4 @@
-from config.config import CNX_POOL, JWT_KEY
+from config.config import CNX_POOL
 
 from flask import make_response
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -26,7 +26,6 @@ class UserModel:
             cnxcursor.close()
             cnx.close()
 
-class UserAuthModel:
     def get_user_by_token(token):
         if token:
             email = JWTAuthModel.decode(token)

@@ -3,7 +3,7 @@ from config.config import CNX_POOL
 from flask import jsonify
 
 class Attraction:
-	def attractions(page, keyword, item_per_page, offset):
+	def get_attractions(page, keyword, item_per_page, offset):
 		# Check if keyword exists for different sql query setting
 		if keyword == None:
 			sql = (
@@ -67,7 +67,7 @@ class Attraction:
 			cnxcursor.close()
 			cnx.close()	
 
-	def attraction(attractionId):
+	def get_attraction_by_id(attractionId):
 		try:
 			cnx = CNX_POOL.get_connection()
 			cnxcursor = cnx.cursor(dictionary = True)
@@ -105,7 +105,7 @@ class Attraction:
 			cnx.close()
 
 class Category:
-	def categories():
+	def get_categories():
 		try:
 			cnx = CNX_POOL.get_connection()
 			cnxcursor = cnx.cursor()

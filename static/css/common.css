@@ -26,6 +26,7 @@ button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 /* Headline */
@@ -122,15 +123,16 @@ nav ul li{
 }
 .user__modal-body button {
     width: 100%;
-    cursor: pointer;
 }
 .user__modal-body .user-action-result--ok {
     font-size: 14px;
     color: #448899;
+    font-weight: bold;
 }
 .user__modal-body .user-action-result--error {
     font-size: 14px;
-    color: #000000;
+    color: #FF2400;
+    font-weight: bold;
 }
 
 /* Footer */

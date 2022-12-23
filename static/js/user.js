@@ -163,6 +163,7 @@ const UserView = {
                     break;    
                 }
                 case "logIn":{
+                    userActionResult.textContent = "登入成功";
                     UserView.reloadPage();
                     break; 
                 }                    

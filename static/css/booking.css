@@ -60,6 +60,17 @@ main {
     right: 0px;
     cursor: pointer;
 }
+
+/* For TapPay */
+.tpfield {
+    width: 235px;
+    height: 40px;
+    border: 1px solid #E8E8E8;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 .confirm {
     text-align: right;
 }

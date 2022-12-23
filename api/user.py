@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from model.user import UserModel, UserAuthModel
+from model.user import UserModel
 
 user_blueprint = Blueprint("user", __name__)
 
@@ -17,17 +17,17 @@ def user_auth():
     # Get user data by token verification
     if request.method == "GET":
         token = request.cookies.get("token")
-        response = UserAuthModel.get_user_by_token(token)
+        response = UserModel.get_user_by_token(token)
         return response
     
     # Log in
     if request.method == "PUT":
         email = request.json["email"]
         password = request.json["password"]
-        response = UserAuthModel.log_in(email, password)
+        response = UserModel.log_in(email, password)
         return response
     
     # Log out
     if request.method == "DELETE":
-        response = UserAuthModel.log_out()
+        response = UserModel.log_out()
         return response

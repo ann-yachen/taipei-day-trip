@@ -20,6 +20,10 @@ const contactEmail = document.getElementById("contact-email");
 
 const totalPrice = document.getElementById("total-price");
 
+/* Get element for payment */
+const paymentButton = document.getElementById("payment-btn");
+
+/* For Booking */
 const BookingModel = {
     get: function(){
         /* Get booking by fetching */
@@ -67,9 +71,9 @@ const BookingView = {
             name.textContent = result.data.attraction.name;
             date.textContent = result.data.date;
             if(result.data.time === "morning"){
-                time.textContent = "上半天";
+                time.textContent = "上午 9 點至下午 4 點";
             }else{
-                time.textContent = "下半天";
+                time.textContent = "下午 2 點至晚上 9 點";
             }
             price.textContent = result.data.price;
             totalPrice.textContent = result.data.price;
@@ -111,4 +115,178 @@ User.UserController.init(BookingController.getBooking);
 BookingController.init();
 
 
+/* ================= Payment: TapPay ================= */
+TPDirect.setupSDK(126891, "app_GprUKxj17ZCLNKyHjPFN8l5kFQ4OyDcdMQL0tteOXK6947AIU5U6inFjEDSJ", "sandbox");
+
+/* TapPay fields including credit card number, expiration date and ccv */
+const fields = {
+    number: {
+        element: "#card-number",
+        placeholder: "**** **** **** ****"
+    },
+    expirationDate: {
+        element: document.getElementById("card-expiration-date"),
+        placeholder: "MM / YY"
+    },
+    ccv: {
+        element: "#card-ccv",
+        placeholder: "ccv"
+    }
+}
+
+/* Sytle for fields */
+TPDirect.card.setup({
+    fields: fields,
+    styles: {
+        // Style all elements
+        "input": {
+            "color": "gray",
+        },
+        
+        // Style ccv field
+        "input.ccv": {
+            "font-size": "16px"
+        },
+        // Style expiration-date field
+        "input.expiration-date": {
+            "font-size": "16px"
+        },
+        // Style card-number field
+        "input.card-number": {
+            "font-size": "16px"
+        },
+
+        // Style focus state
+        ":focus": {
+            "color": "black"
+        },
+        // Style valid state
+        ".valid": {
+            "color": "#448899"
+        },
+        // Style invalid state
+        ".invalid": {
+            "color": "#FF2400"
+        },
+
+        // Media queries
+        // Note that these apply to the iframe, not the root window.
+        "@media screen and (max-width: 400px)": {
+            "input": {
+                "color": "orange"
+            }
+        }
+    },
+
+    /*
+     This setting will show that after the card number is entered correctly, 
+     the first six and last four digits of the credit card number will be *.
+    */
+    isMaskCreditCardNumber: true,
+    maskCreditCardNumberRange: {
+        beginIndex: 0,
+        endIndex: 11
+    }
+})
+
+const OrderModel = {
+    getTapPayPrime: function(e){
+        e.preventDefault();
+        
+        // Get TapPay Fields status
+        const tappayStatus = TPDirect.card.getTappayFieldsStatus();
+        // Check if can getPrime or not
+        if(tappayStatus.canGetPrime === false){
+            alert("Cannot get prime.");
+        }else{
+            // Get prime
+            TPDirect.card.getPrime((result) => {
+                if(result.status !== 0){
+                    alert("get prime error " + result.msg);
+                }
+                let prime =  result.card.prime;
+                OrderModel.post(prime);
+            })                 
+        }
+    },
+
+    post: function(prime){
+        (async () => {
+            let response = await fetch("/api/booking");
+            let result = await response.json();
+            const order = result;
+            order.price = order.data.price;
+            delete order.data.price;
+            order.trip = order.data;
+            delete order.data;
+            const contact = OrderView.getContactInfo();
+            const requestOptions = {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    prime,
+                    order,
+                    contact                    
+                })
+            };
+            const orderResponse = await fetch("/api/orders", requestOptions);
+            const orderResult = await orderResponse.json();
+            OrderView.getOrderResult(orderResult);
+        })();
+    }
+}
+
+const OrderView = {
+    getOrderResult: function(result){
+        if(result.error === true){
+            alert(result.message);
+        }else{
+            window.location.href = "/thankyou?number=" + result.data.number;
+        }
+    },
+
+    getContactInfo: function(){
+        const contactName = document.getElementById("contact-name").value;
+        const contactEmail = document.getElementById("contact-email").value;
+        const contactPhone = document.getElementById("contact-phone").value;
+        const contact = {
+            "name": contactName,
+            "email": contactEmail,
+            "phone": contactPhone
+        }
+        return contact;
+    }
+}
+
+const OrderController = {
+    init: function(){
+        paymentButton.addEventListener("click", OrderModel.getTapPayPrime);
+    }
+}
+
+OrderController.init();
+
+// call TPDirect.card.getPrime when user submit form to get tappay prime
+// $('form').on('submit', onSubmit)
+function onSubmit(event) {
+    event.preventDefault();
+
+    // Get TapPay Fields status
+    const tappayStatus = TPDirect.card.getTappayFieldsStatus();
+
+    // Check can getPrime
+    if(tappayStatus.canGetPrime === false){
+        alert('can not get prime');
+        return
+    }
+
+    // Get prime
+    TPDirect.card.getPrime((result) => {
+        if(result.status !== 0){
+            alert("get prime error " + result.msg)
+            return
+        }
+        alert('get prime success, prime: ' + result.card.prime)
+    })
+}
 

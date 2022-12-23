@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}訂購完成：台北一日遊{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/css/thankyou.css">
+{% endblock %}
+
+{% block section %}
+<section class="thankyou">
+    <div class="dialog-title">行程預定成功</div>
+    <div class="dialog-title">您的訂單編號如下</div>
+    <div class="dialog-title order-number" id="order-number"></div>
+    <div>請記住此編號，或至會員中心查詢歷史訂單</div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script type="module", src="/js/thankyou.js"></script>
+{% endblock %}

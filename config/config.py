@@ -18,3 +18,7 @@ CNX_POOL = mysql.connector.pooling.MySQLConnectionPool(
 
 # PyJWT key
 JWT_KEY = os.getenv("JWT_KEY")
+
+# Payment
+PAYMENT_PARNER_KEY = os.getenv("PAYMENT_PARTNER_KEY")
+PAYMENT_MERCHANT_ID = os.getenv("PAYMENT_MERCHANT_ID")
