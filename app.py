@@ -2,12 +2,14 @@ from flask import *
 from api.attraction import attraction_blueprint
 from api.user import user_blueprint
 from api.booking import booking_blueprint
+from api.order import order_blueprint
 
 app = Flask(__name__, static_folder = "static", static_url_path = "/")
 
 app.register_blueprint(attraction_blueprint, url_prefix = "/api")
 app.register_blueprint(user_blueprint, url_prefix = "/api/user")
 app.register_blueprint(booking_blueprint, url_prefix = "/api/booking")
+app.register_blueprint(order_blueprint, url_prefix = "/api")
 
 app.config["JSON_AS_ASCII"] = False
 app.config['JSON_SORT_KEYS'] = False

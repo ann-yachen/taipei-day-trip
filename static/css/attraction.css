@@ -101,7 +101,8 @@ main {
 .booking .date--error {
     margin-left: 10px;
     font-size: 14px;
-    color: #000000;
+    color: #FF2400;
+    font-weight: bold;
 }
 .booking .radio {
     display: inline-flex;
@@ -135,7 +136,6 @@ main {
 }
 .booking button {
     margin: 10px 0px 40px 0px;
-    cursor: pointer;
 }
 
 .hr-solid {

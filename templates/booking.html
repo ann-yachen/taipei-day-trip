@@ -24,24 +24,25 @@
         <div class="booking__body__delete-icon"><img src="/img/booking/icon_delete.png"></div>
         <hr class="hr-solid" />
         <div class="title">您的聯絡資訊</div>
-        <div>聯絡姓名：<input type="text" id="contact-name" required /></div>
-        <div>聯絡信箱：<input type="text" id="contact-email" required /></div>
-        <div>手機號碼：<input type="text" id="contact-phone" required /></div>
+        <div>聯絡姓名：<input type="text" id="contact-name" /></div>
+        <div>聯絡信箱：<input type="text" id="contact-email" /></div>
+        <div>手機號碼：<input type="text" id="contact-phone" /></div>
         <div class="sub-title">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</div>
         <hr class="hr-solid" />
         <div class="title">信用卡付款資訊</div>
-        <div>卡片號碼：<input type="tel" placeholder="**** **** **** ****" pattern="[0-9]{4}[0-9]{4}[0-9]{4}[0-9]{4}" minlength="19" maxlength="19" required /></div>
-        <div>過期時間：<input type="text" placeholder="MM/YY" minlength="5" maxlength="5" required /></div>
-        <div>驗證密碼：<input type="text" placeholder="CVV" minlength="3" maxlength="3" required /></div>
+        <div>卡片號碼：<div class="tpfield" id="card-number"></div></div>
+        <div>過期時間：<div class="tpfield" id="card-expiration-date"></div></div>
+        <div>驗證密碼：<div class="tpfield" id="card-ccv"></div></div>
         <hr class="hr-solid" />
         <div class="confirm">
             <div class="sub-title">總價：新台幣 <span id="total-price"></span> 元</div>
-            <button>確認訂購並付款</button>
+            <button id="payment-btn">確認訂購並付款</button>
         </div>
     </div>
 </section>
 {% endblock %}
 
-{% block script %}   
+{% block script %}
+<script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
 <script type="module", src="/js/booking.js"></script>
 {% endblock %}
