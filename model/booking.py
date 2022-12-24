@@ -28,7 +28,7 @@ class BookingModel():
                 del attraction["images"]
                 attraction["image"] = image 
                 booking["date"] = booking["date"].strftime("%Y-%m-%d") # Change date format
-                return{"data": {"attraction": attraction, "date": booking["date"], "time": booking["time"], "price": booking["price"]}}
+                return {"data": {"attraction": attraction, "date": booking["date"], "time": booking["time"], "price": booking["price"]}}
             else:
                 return {"data": None}
         except:

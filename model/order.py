@@ -1,8 +1,7 @@
 from config.config import CNX_POOL, PAYMENT_PARNER_KEY, PAYMENT_MERCHANT_ID
-import datetime
 
+import datetime # For order number
 import requests
-import json
 
 class OrderModel:
     def create_order(user_id, prime, order, contact):
@@ -16,30 +15,53 @@ class OrderModel:
 
             # Create order, payment status set as 0
             sql = (
-                "INSERT INTO orders (number, user_id, prime, price, status) "
+                "INSERT INTO orders ("
+                    "number, "
+                    "user_id, "
+                    "prime, "
+                    "price, "
+                    "status"
+                ") "
                 "VALUES (%s, %s, %s, %s, %s)"
             )
             par = (number, user_id, prime, order["price"], 0)
             cnxcursor.execute(sql, par)
 
-            # Get order_id for trip and contact
-            cnxcursor.execute("SELECT id FROM orders WHERE user_id=%s AND number=%s", (user_id, number))
-            db_order = cnxcursor.fetchone()
-            order_id = db_order["id"]
             # Save trip details into order_trip
             sql = (
-                "INSERT INTO order_trip (order_id, attraction, date, time) "
-                "VALUES (%s, %s, %s, %s)"
+                "INSERT INTO order_trip ("
+                    "order_number, "
+                    "attraction_id, "
+                    "attraction_name, "
+                    "attraction_address, "
+                    "attraction_image, "
+                    "date, "
+                    "time"
+                ") "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s)"
             )
-            par = (order_id, json.dumps(order["trip"]["attraction"]), order["trip"]["date"], order["trip"]["time"])
+            par = (
+                number, 
+                order["attraction"]["id"], 
+                order["attraction"]["name"],
+                order["attraction"]["address"],
+                order["attraction"]["image"],
+                order["date"],
+                order["time"]
+            )
             cnxcursor.execute(sql, par)
 
             # Save contact details into order_contact
             sql = (
-                "INSERT INTO order_contact (order_id, name, email, phone) "
+                "INSERT INTO order_contact ("
+                    "order_number, "
+                    "contact_name, "
+                    "contact_email, "
+                    "contact_phone"
+                ") "
                 "VALUES (%s, %s, %s, %s)"
             )
-            par = (order_id, contact["name"], contact["email"], contact["phone"])
+            par = (number, contact["name"], contact["email"], contact["phone"])
             cnxcursor.execute(sql, par)
             cnx.commit()
 
@@ -63,23 +85,23 @@ class OrderModel:
                 },
                 "remember": False
             }
-            response = requests.post(url, headers=headers, json=payload)
+            response = requests.post(url, headers = headers, json = payload)
             payment_reponse = response.json()
             payment_status = payment_reponse["status"]
             payment_message = payment_reponse["msg"]
 
             # Create payment for order            
             sql = (
-                "INSERT INTO payment (order_id, order_number, status, message, time) "
-                "VALUES (%s, %s, %s, %s, %s)"
+                "INSERT INTO payment (order_number, status, message, time) "
+                "VALUES (%s, %s, %s, %s)"
             )
-            par = (order_id, number, payment_status, payment_message, datetime.datetime.now())
+            par = (number, payment_status, payment_message, datetime.datetime.now())
             cnxcursor.execute(sql, par)
             cnx.commit()
 
             # If payment is success, change order status to 1 for record 
             if payment_status == 0 and payment_message == "Success":
-                cnxcursor.execute("UPDATE orders SET status=1 WHERE id=%s", (order_id, ))
+                cnxcursor.execute("UPDATE orders SET status=1 WHERE number=%s", (number, ))
                 cnxcursor.execute("DELETE FROM booking WHERE user_id=%s", (user_id, ))
                 cnx.commit()
                 message = "付款成功"
@@ -96,17 +118,70 @@ class OrderModel:
         try:
             cnx = CNX_POOL.get_connection()
             cnxcursor = cnx.cursor(dictionary = True)
-            cnxcursor.execute("SELECT id, number, price, status FROM orders WHERE number=%s AND user_id=%s", (orderNumber, user_id))
+            sql = (
+                "SELECT "
+                    "id, "
+                    "number, "
+                    "price, "
+                    "status, "
+                    "attraction_id, "
+                    "attraction_name, "
+                    "attraction_address, "
+                    "attraction_image, "
+                    "date, "
+                    "time, "
+                    "contact_name, "
+                    "contact_email, "
+                    "contact_phone, "
+                    "status "
+                "FROM orders "
+                "INNER JOIN order_trip "
+                "ON orders.number=order_trip.order_number "
+                "INNER JOIN order_contact "
+                "ON orders.number=order_contact.order_number "
+                "WHERE number=%s AND user_id=%s"
+            )
+            par = (orderNumber, user_id)
+            cnxcursor.execute(sql, par)
             order = cnxcursor.fetchone()
-            order_id = order["id"]
-            cnxcursor.execute("SELECT attraction, date, time FROM order_trip WHERE order_id=%s", (order_id, ))
-            order_trip = cnxcursor.fetchone()
-            cnxcursor.execute("SELECT name, email, phone FROM order_contact WHERE order_id=%s", (order_id, ))
-            order_contact = cnxcursor.fetchone()
-            order["trip"] = order_trip
-            order["contact"] = order_contact
-            del order["id"]
-            return {"data": order}
+            if order:
+                # Organize data to meet spec
+                attraction = {
+                    "id": order["attraction_id"],
+                    "name": order["attraction_name"],
+                    "address": order["attraction_address"], 
+                    "image": order["attraction_image"]
+                }
+                trip = {
+                    "attraction": attraction,
+                    "date": order["date"].strftime("%Y-%m-%d"),
+                    "time": order["time"]
+                }
+                contact = {
+                    "name": order["contact_name"],
+                    "email": order["contact_email"],
+                    "phone": order["contact_phone"]
+                }
+                order["trip"] = trip
+                order["contact"] = contact
+                remove_key_list = (
+                    "id",
+                    "attraction_id",
+                    "attraction_name",
+                    "attraction_address",
+                    "attraction_image",
+                    "date",
+                    "time",
+                    "contact_name",
+                    "contact_email",
+                    "contact_phone"
+                )
+                # Remove key-value which have been organized
+                for key in remove_key_list:
+                    order.pop(key, None)
+                return {"data": order}
+            else:
+                return {"error": True, "message": "訂單不存在"}, 400
         except:
             return {"error": True, "message": "伺服器內部錯誤"}, 500
         finally:

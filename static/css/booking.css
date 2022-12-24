@@ -10,6 +10,10 @@ input {
     padding: 10px;
     border: 1px solid #E8E8E8;
 }
+button:disabled {
+    background-color: #E8E8E8;
+    color: #000000;
+}
 
 main {
     width: 1200px;
@@ -61,7 +65,18 @@ main {
     cursor: pointer;
 }
 
+.contact-phone--error {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #FF2400;
+    font-weight: bold;
+}
+
 /* For TapPay */
+.card-info {
+    display: flex;
+    align-items: center;
+}
 .tpfield {
     width: 235px;
     height: 40px;
@@ -109,6 +124,4 @@ main {
         position: static;
         text-align: right;
     }
-
 }
-

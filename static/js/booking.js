@@ -17,6 +17,8 @@ const address = document.getElementById("address");
 
 const contactName = document.getElementById("contact-name");
 const contactEmail = document.getElementById("contact-email");
+const contactPhone = document.getElementById("contact-phone");
+const contactPhoneError = document.getElementById("contact-phone-error");
 
 const totalPrice = document.getElementById("total-price");
 
@@ -212,26 +214,34 @@ const OrderModel = {
 
     post: function(prime){
         (async () => {
-            let response = await fetch("/api/booking");
-            let result = await response.json();
-            const order = result;
-            order.price = order.data.price;
-            delete order.data.price;
-            order.trip = order.data;
-            delete order.data;
-            const contact = OrderView.getContactInfo();
-            const requestOptions = {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    prime,
-                    order,
-                    contact                    
-                })
-            };
-            const orderResponse = await fetch("/api/orders", requestOptions);
-            const orderResult = await orderResponse.json();
-            OrderView.getOrderResult(orderResult);
+            try{
+                let bookingResponse = await fetch("/api/booking");
+                let bookingResult = await bookingResponse.json();
+                const order = bookingResult;
+                order.price = order.data.price;
+                delete order.data.price;
+                order.trip = order.data;
+                delete order.data;
+                const contact = OrderView.getContactInfo();
+                /* Check if contact infos have been filled */
+                if(contact !== undefined){
+                    const requestOptions = {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                            prime,
+                            order,
+                            contact                    
+                        })
+                    };
+                    OrderView.lockPaymentButton(); // Disable payment button to avoid sending request
+                    const orderResponse = await fetch("/api/orders", requestOptions);
+                    const orderResult = await orderResponse.json();
+                    OrderView.getOrderResult(orderResult);
+                }
+            }catch(err){
+                console.log(err);
+            }
         })();
     }
 }
@@ -240,21 +250,37 @@ const OrderView = {
     getOrderResult: function(result){
         if(result.error === true){
             alert(result.message);
+            OrderView.lockPaymentButton();
         }else{
-            window.location.href = "/thankyou?number=" + result.data.number;
+            window.location.href = "/thankyou?number=" + result.data.number; // Redirect to thankyou page
         }
     },
 
     getContactInfo: function(){
-        const contactName = document.getElementById("contact-name").value;
-        const contactEmail = document.getElementById("contact-email").value;
-        const contactPhone = document.getElementById("contact-phone").value;
-        const contact = {
-            "name": contactName,
-            "email": contactEmail,
-            "phone": contactPhone
+        let name = contactName.value;
+        let email = contactEmail.value;
+        let phone = contactPhone.value;
+        if(phone === ""){
+            contactPhoneError.textContent = "請輸入電話";
+        }else{
+            contactPhoneError.textContent = "";
+            const contact = {
+                "name": name,
+                "email": email,
+                "phone": phone
+            }
+            return contact;            
         }
-        return contact;
+    },
+
+    lockPaymentButton: function(){
+        paymentButton.setAttribute("disabled", "disabled");
+        paymentButton.textContent = "付款中請稍候...";
+    },
+    
+    unlockPaymentButton: function(){
+        paymentButton.removeAttribute("disabled");
+        paymentButton.textContent = "確認訂購並付款";
     }
 }
 
@@ -264,29 +290,5 @@ const OrderController = {
     }
 }
 
+/* Init order features */
 OrderController.init();
-
-// call TPDirect.card.getPrime when user submit form to get tappay prime
-// $('form').on('submit', onSubmit)
-function onSubmit(event) {
-    event.preventDefault();
-
-    // Get TapPay Fields status
-    const tappayStatus = TPDirect.card.getTappayFieldsStatus();
-
-    // Check can getPrime
-    if(tappayStatus.canGetPrime === false){
-        alert('can not get prime');
-        return
-    }
-
-    // Get prime
-    TPDirect.card.getPrime((result) => {
-        if(result.status !== 0){
-            alert("get prime error " + result.msg)
-            return
-        }
-        alert('get prime success, prime: ' + result.card.prime)
-    })
-}
-
