@@ -2,6 +2,7 @@ from config.config import CNX_POOL
 
 from flask import Blueprint, request
 from model.order import OrderModel
+
 from model.jwt import JWTAuthModel
 
 order_blueprint = Blueprint("order", __name__)
@@ -19,7 +20,34 @@ def orders():
             if user:
                 user_id = user["id"]
                 prime = request.json["prime"]
-                order = request.json["order"]
+                # Get order content from booking
+                cnxcursor.execute("SELECT * FROM booking WHERE user_id=%s", (user_id, ))
+                booking = cnxcursor.fetchone()
+                # Get attraction data
+                attraction_id = booking["attraction_id"]
+                sql = (
+                    "SELECT id, name, address, GROUP_CONCAT(images) AS images "
+                    "FROM attractions "
+                    "INNER JOIN attraction_images "
+				    "ON attractions.id=attraction_images.attraction_id "
+                    "WHERE id=%s "
+				    "GROUP BY id, name, address"                 
+                )
+                par = (attraction_id, )
+                cnxcursor.execute(sql, par)
+                attraction = cnxcursor.fetchone()
+                # Keep the first image
+                attraction["images"] = attraction["images"].split(",")
+                image = attraction["images"][0]
+                del attraction["images"]
+                attraction["image"] = image
+                booking["date"] = booking["date"].strftime("%Y-%m-%d")
+                order = {
+                    "attraction": attraction,
+                    "date": booking["date"],
+                    "time": booking["time"],
+                    "price": booking["price"]
+                }
                 contact = request.json["contact"]
                 response = OrderModel.create_order(user_id, prime, order, contact)
                 return response
