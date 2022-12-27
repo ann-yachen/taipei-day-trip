@@ -209,9 +209,13 @@ const BookingAttractionController = {
             }
         }
         let price = document.getElementById("price").textContent;
+        const today = new Date();
         if(date === ""){
             dateError.textContent = "請選擇日期";
+        }else if(new Date(date) <= today){
+            dateError.textContent = "選擇的日期必須晚於今天";
         }else{
+            dateError.textContent = "";
             BookingAttractionModel.post(attractionId, date, time, price);            
         }
     }

@@ -1,19 +1,11 @@
 import * as User from "./user.js"
 
-const welcomeMessage = document.querySelector(".booking__header");
+const welcomeMessage = document.querySelector(".bookings__header");
 const welcomeUserName = document.getElementById("welcome-user-name");
 
-const booking = document.querySelector(".booking__body");
-const bookingDeleteIcon = document.querySelector(".booking__body__delete-icon");
-const bookingNone = document.querySelector(".booking__body--none");
-
-/* Get elements to render booking info */
-const image = document.getElementById("image");
-const name = document.getElementById("name");
-const date = document.getElementById("date");
-const time = document.getElementById("time");
-const price = document.getElementById("price");
-const address = document.getElementById("address");
+const bookings = document.querySelector(".bookings__body");
+const bookingsNone = document.querySelector(".bookings__body--none");
+const bookingsFooter = document.querySelector(".bookings__footer");
 
 const contactName = document.getElementById("contact-name");
 const contactEmail = document.getElementById("contact-email");
@@ -44,9 +36,15 @@ const BookingModel = {
         })();
     },
 
-    delete: function(){
+    delete: function(bookingId){
         (async () => {
-            const requestOptions = { method: "DELETE" };
+            const requestOptions = {
+                method: "DELETE",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    "bookingId": bookingId
+                })
+            };
             try{
                 const response = await fetch("/api/booking", requestOptions);
                 const result = await response.json();
@@ -63,33 +61,114 @@ const BookingModel = {
 const BookingView = {
     showBooking: function(result){
         if(result.data === null){
-            bookingNone.style.display = "block";
+            bookingsNone.style.display = "block";
+            bookingsFooter.style.display = "none";
         }
         else{
-            const attractionImage = document.createElement("img");
-            attractionImage.setAttribute("src", result.data.attraction.image);
-            attractionImage.className = "attraction-img";
-            image.appendChild(attractionImage);
-            name.textContent = result.data.attraction.name;
-            date.textContent = result.data.date;
-            if(result.data.time === "morning"){
-                time.textContent = "上午 9 點至下午 4 點";
-            }else{
-                time.textContent = "下午 2 點至晚上 9 點";
+            let bookingsData = result.data;
+            for(let i = 0; i < bookingsData.length; i++){
+                BookingView.renderBooking(bookingsData[i]);
             }
-            price.textContent = result.data.price;
-            totalPrice.textContent = result.data.price;
-            address.textContent = result.data.attraction.address;
-            booking.style.display = "block";          
+            bookings.style.display = "block";
+            BookingView.showTotalPrice(bookingsData);
+            bookingsFooter.style.display = "block";
         }
+    },
+
+    renderBooking: function(bookingData){
+        /* Create DocumentFragment for each booking rendering */
+        let fragment = document.createDocumentFragment();
+
+        /* Create booking */
+        let booking = document.createElement("div");
+        booking.className = "booking";
+        
+        /* Create booking content */
+        let content = document.createElement("div");
+        content.className = "content";
+
+        /* Add attraction image into content */
+        let image = document.createElement("div");
+        image.className = "image";
+        let attractionImage = document.createElement("img");
+        attractionImage.setAttribute("src", bookingData.attraction.image);
+        attractionImage.className = "attraction-img";
+        image.appendChild(attractionImage);
+
+        /* Add attraction info into content */
+        let info = document.createElement("div");
+        info.className = "info";
+
+        let name = document.createElement("div");
+        name.className = "attraction-name";
+        name.textContent = "台北一日遊：" + bookingData.attraction.name;
+
+        let date = document.createElement("div");
+        let dateTitle = document.createElement("span");
+        dateTitle.className = "sub-title";
+        dateTitle.textContent = "日期：";
+        date.appendChild(dateTitle);
+        date.append(bookingData.date);
+
+        let time = document.createElement("div");
+        let timeTitle = document.createElement("span");
+        timeTitle.className = "sub-title";
+        timeTitle.textContent = "時間：";
+        time.appendChild(timeTitle);
+        if(bookingData.time === "morning"){
+            time.append("上午 9 點至下午 2 點");
+        }else{
+            time.append("下午 2 點至晚上 7 點");
+        }
+
+        let price = document.createElement("div");
+        let priceTitle = document.createElement("span");
+        priceTitle.className = "sub-title";
+        priceTitle.textContent = "費用：";
+        price.appendChild(priceTitle);
+        price.append("新台幣 ", bookingData.price, " 元");
+
+        let address = document.createElement("div");
+        let addressTitle = document.createElement("span");
+        addressTitle.className = "sub-title";
+        addressTitle.textContent = "地點：";
+        address.appendChild(addressTitle);
+        address.append(bookingData.attraction.address);
+
+        /* Add all attraction infos into info and append to content with image */
+        info.append(name, date, time, price, address);
+        content.append(image, info);
+
+        /* Create delete icon of booking */
+        let bookingDeleteIcon = document.createElement("div");
+        bookingDeleteIcon.className = "booking__delete-icon";
+        bookingDeleteIcon.setAttribute("booking-id", bookingData.id);
+        let deleteIcon = document.createElement("img");
+        deleteIcon.setAttribute("src", "/img/booking/icon_delete.png");
+        bookingDeleteIcon.appendChild(deleteIcon);
+        bookingDeleteIcon.addEventListener("click", BookingController.deleteBooking);
+
+        /* Create hr */
+        let hr = document.createElement("hr");
+        hr.className = "hr-solid";
+
+        booking.append(content, bookingDeleteIcon, hr);
+        fragment.appendChild(booking);
+
+        /* Add DocumentFragment with booking into bookings */
+        bookings.appendChild(fragment);
+    },
+
+    showTotalPrice: function(bookingsData){
+        let totalbookingsPrice = 0;
+        for(let i = 0; i < bookingsData.length; i++){
+            totalbookingsPrice += bookingsData[i].price;
+        }
+        totalPrice.textContent = totalbookingsPrice;
     }
 }
 
 const BookingController = {
-    init: function(){
-        bookingDeleteIcon.addEventListener("click", BookingController.deleteBooking);
-    },
-
     /* Callback after getting user status  */
     getBooking: function(result){
         /* Check if user have logged in or not in advance */
@@ -106,15 +185,15 @@ const BookingController = {
     },
 
     deleteBooking: function(){
-        BookingModel.delete();
+        console.log(this);
+        let bookingId = this.getAttribute("booking-id");
+        console.log(bookingId);
+        BookingModel.delete(bookingId);
     }
 }
 
 /* Init user features */
 User.UserController.init(BookingController.getBooking);
-
-/* Init booking features */
-BookingController.init();
 
 
 /* ================= Payment: TapPay ================= */
@@ -215,13 +294,19 @@ const OrderModel = {
     post: function(prime){
         (async () => {
             try{
+                /* Get booking data from api */
                 let bookingResponse = await fetch("/api/booking");
                 let bookingResult = await bookingResponse.json();
                 const order = bookingResult;
-                order.price = order.data.price;
-                delete order.data.price;
+                order.price = 0;
+                for(let i = 0; i < order.data.length; i++){
+                    delete order.data[i].id; // Remove booking id
+                    order.price += order.data[i].price;
+                    delete order.data[i].price; // Remove price for each booking
+                }
                 order.trip = order.data;
-                delete order.data;
+                delete order.data; // Remove booking data after organization
+                /* Get contact infos */
                 const contact = OrderView.getContactInfo();
                 /* Check if contact infos have been filled */
                 if(contact !== undefined){
@@ -231,7 +316,7 @@ const OrderModel = {
                         body: JSON.stringify({
                             prime,
                             order,
-                            contact                    
+                            contact
                         })
                     };
                     OrderView.lockPaymentButton(); // Disable payment button to avoid sending request

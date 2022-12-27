@@ -20,33 +20,59 @@ def orders():
             if user:
                 user_id = user["id"]
                 prime = request.json["prime"]
-                # Get order content from booking
-                cnxcursor.execute("SELECT * FROM booking WHERE user_id=%s", (user_id, ))
-                booking = cnxcursor.fetchone()
-                # Get attraction data
-                attraction_id = booking["attraction_id"]
                 sql = (
-                    "SELECT id, name, address, GROUP_CONCAT(images) AS images "
-                    "FROM attractions "
+                    "SELECT " 
+                        "booking.date, "
+                        "booking.time, "
+                        "booking.price, "
+                        "booking.attraction_id, "
+                        "attractions.name, "
+                        "attractions.address, "
+                        "GROUP_CONCAT(attraction_images.images) AS images "
+                    "FROM booking "
+                    "INNER JOIN attractions "
+                    "ON booking.attraction_id=attractions.id "
                     "INNER JOIN attraction_images "
-				    "ON attractions.id=attraction_images.attraction_id "
-                    "WHERE id=%s "
-				    "GROUP BY id, name, address"                 
+                    "ON attractions.id=attraction_images.attraction_id "
+                    "WHERE user_id=%s "
+                    "GROUP BY "
+                        "booking.date, "
+                        "booking.time, "
+                        "booking.price, "
+                        "booking.attraction_id, "
+                        "attractions.name, "
+                        "attractions.address"
                 )
-                par = (attraction_id, )
+                par = (user_id, )
                 cnxcursor.execute(sql, par)
-                attraction = cnxcursor.fetchone()
-                # Keep the first image
-                attraction["images"] = attraction["images"].split(",")
-                image = attraction["images"][0]
-                del attraction["images"]
-                attraction["image"] = image
-                booking["date"] = booking["date"].strftime("%Y-%m-%d")
+                bookings = cnxcursor.fetchall()
+                total_price = 0
+                for booking in bookings:
+                    # Calculate total price
+                    total_price += booking["price"]
+                    # Get the first image of attraction
+                    images = booking["images"].split(",")
+                    image = images[0]
+                    booking["attraction"] = {
+                        "id": booking["attraction_id"],
+                        "name": booking["name"],
+                        "address": booking["address"],
+                        "image": image
+                    }
+                    booking["date"] = booking["date"].strftime("%Y-%m-%d") # Change to YYYY-MM-DD
+                    # Remove key-value to meet spec
+                    remove_key_list = {
+                        "price",
+                        "attraction_id",
+                        "name",
+                        "address",
+                        "images"
+                    }
+                    for key in remove_key_list:
+                        booking.pop(key, None)
                 order = {
-                    "attraction": attraction,
-                    "date": booking["date"],
-                    "time": booking["time"],
-                    "price": booking["price"]
+                    "price": total_price,
+                    "trip": bookings
                 }
                 contact = request.json["contact"]
                 response = OrderModel.create_order(user_id, prime, order, contact)

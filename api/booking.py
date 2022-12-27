@@ -33,7 +33,8 @@ def booking():
                 
                 if request.method == "DELETE":
                     user_id = user["id"]
-                    return BookingModel.delete_booking(user_id)
+                    booking_id = request.json["bookingId"]
+                    return BookingModel.delete_booking(user_id, booking_id)
             else:
                 return {"error": True, "message": "Email 不正確"}, 400           
         except:
