@@ -70,6 +70,12 @@ main {
     top: 0px;
     right: 0px;
     cursor: pointer;
+    -webkit-transtion: 0.5s;
+    transition: 0.5s;
+}
+.booking__delete-icon:hover {
+    -webkit-filter: invert(1);
+    filter: invert(1);
 }
 
 .bookings__footer {

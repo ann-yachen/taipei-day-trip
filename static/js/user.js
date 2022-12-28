@@ -100,6 +100,7 @@ const UserView = {
         }else{
             userData = result;
             user.textContent = "登出系統";
+            user.setAttribute("title", "登出系統");
             user.addEventListener("click", UserController.logOut);
             userBooking.addEventListener("click", UserView.redirectBooking);
         }

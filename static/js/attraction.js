@@ -1,3 +1,5 @@
+import { UserView } from "./user.js"; // For switchBooking by checking login status
+
 /* ================= Render Attraction ================= */
 /* Get current URL to get attraction id for fetching */
 let currentURL = window.location.href;
@@ -52,7 +54,7 @@ const AttractionView = {
         for(let i = 0; i < attractionImages.length; i++){
             let image = document.createElement("img");
             image.src = attractionImages[i];
-            image.className = "carousel-image";
+            image.className = "carousel-image fade";
             images.appendChild(image);
         }
         /* Create prev/next buttons */
@@ -177,7 +179,7 @@ const BookingAttractionView = {
     switchBooking: function(result){
         /* Check if user have logged in or not in advance */
         if(result.data === null || result.error === true){
-            bookingButton.addEventListener("click", User.UserView.showModal); // If not, need to log in in advance
+            bookingButton.addEventListener("click", UserView.showModal); // If not, need to log in in advance
         }else{
             bookingButton.addEventListener("click", BookingAttractionController.booking);
         }

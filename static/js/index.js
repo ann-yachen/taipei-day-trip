@@ -55,7 +55,8 @@ const AttractionsView = {
 
                 /* Create image of attraction with hyperlink */                    
                 let imageLink = document.createElement("a");
-                imageLink.setAttribute("href", "/attraction/" + attractionsData[i]["id"]);                 
+                imageLink.setAttribute("href", "/attraction/" + attractionsData[i]["id"]);
+                imageLink.setAttribute("title", attractionsData[i]["name"]);
                 let image = document.createElement("img");
                 image.setAttribute("src", attractionsData[i]["images"][0]);
                 image.className = "attraction-img";
