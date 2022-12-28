@@ -24,5 +24,18 @@
 {% endblock %}
 
 {% block script %}
-<script type="module", src="/js/index.js"></script>
+<script type="module" src="/js/index.js"></script>
+<script type="module">
+    import * as User from "/js/user.js";
+    import * as Index from "/js/index.js";
+    
+    /* Init user features */
+    User.UserController.init();
+
+    /* Init attractions features */
+    Index.AttractionsController.init();
+
+    /* Init categories features */
+    Index.CategoriesController.init();
+</script>
 {% endblock %}

@@ -1,5 +1,3 @@
-import * as User from "./user.js"
-
 /* ================= Render Attraction ================= */
 /* Get current URL to get attraction id for fetching */
 let currentURL = window.location.href;
@@ -221,10 +219,29 @@ const BookingAttractionController = {
     }
 }
 
-/* Init user features */
-User.UserController.init(BookingAttractionView.switchBooking);
-
-/* Init attraction and booking features */
-AttractionController.init();
-BookingAttractionController.init();
-
+/* Export as module for attraction rendering and booking */
+export {
+    currentURL,
+    attractionId,
+    src, 
+    pageTitle,
+    name, 
+    category, 
+    mrt,
+    description,
+    address,
+    transport,
+    images,
+    imageIndex,
+    AttractionModel,
+    AttractionView,
+    AttractionController,
+    
+    timeMorning,
+    timeAfternoon,
+    bookingButton,
+    dateError,
+    BookingAttractionModel,
+    BookingAttractionView,
+    BookingAttractionController
+};

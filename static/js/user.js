@@ -1,3 +1,5 @@
+let userData = {}; // Save user status
+
 const currentPage = window.location.href; // Get URL of current page
 
 /* Booking */
@@ -217,6 +219,7 @@ const UserController = {
 
 /* Export as module for nav and getting user status*/
 export {
+    userData,
     currentPage,
     userBooking,
     user, 

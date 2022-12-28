@@ -51,5 +51,16 @@
 {% endblock %}
 
 {% block script %}   
-<script type="module", src="/js/attraction.js"></script>
+<script type="module" src="/js/attraction.js"></script>
+<script type="module">
+    import * as User from "/js/user.js";
+    import * as Attraction from "/js/attraction.js";
+
+    /* Init user features */
+    User.UserController.init(Attraction.BookingAttractionView.switchBooking);
+
+    /* Init attraction and booking features */
+    Attraction.AttractionController.init();
+    Attraction.BookingAttractionController.init();
+</script>
 {% endblock %}

@@ -16,5 +16,11 @@
 {% endblock %}
 
 {% block script %}
-<script type="module", src="/js/thankyou.js"></script>
+<script type="text/javascript", src="/js/thankyou.js"></script>
+<script type="module">
+    import * as User from "/js/user.js";
+
+    /* Init user features */
+    User.UserController.init();
+</script>
 {% endblock %}

@@ -33,5 +33,15 @@
 
 {% block script %}
 <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
-<script type="module", src="/js/booking.js"></script>
+<script type="module" src="/js/booking.js"></script>
+<script type="module">
+    import * as User from "/js/user.js";
+    import * as Booking from "/js/booking.js";
+
+    /* Init user features */
+    User.UserController.init(Booking.BookingController.getBooking);
+
+    /* Init order features */
+    Booking.OrderController.init();
+</script>
 {% endblock %}

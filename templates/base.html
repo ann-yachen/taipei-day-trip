@@ -12,7 +12,7 @@
 <body>
     <header>
         <nav>
-            <div class="headline logo">台北一日遊</div>
+            <div title="回首頁" class="headline logo">台北一日遊</div>
             <ul>
                 <li id="user-booking">預定行程</li>
                 <li id="user">登入/註冊</li>
@@ -54,7 +54,6 @@
     <script>
         const logo = document.querySelector(".logo");
         logo.addEventListener("click", () => { window.location.href = "/"; }); // Back to homepage
-        let userData = {};
     </script>
     <script type="module", src="/js/user.js"></script>
     {% block script %}{% endblock %}

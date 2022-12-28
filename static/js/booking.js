@@ -1,5 +1,3 @@
-import * as User from "./user.js"
-
 const welcomeMessage = document.querySelector(".bookings__header");
 const welcomeUserName = document.getElementById("welcome-user-name");
 
@@ -17,7 +15,7 @@ const totalPrice = document.getElementById("total-price");
 /* Get element for payment */
 const paymentButton = document.getElementById("payment-btn");
 
-/* For Booking */
+/* ================= Booking ================= */
 const BookingModel = {
     get: function(){
         /* Get booking by fetching */
@@ -145,6 +143,7 @@ const BookingView = {
         bookingDeleteIcon.setAttribute("booking-id", bookingData.id);
         let deleteIcon = document.createElement("img");
         deleteIcon.setAttribute("src", "/img/booking/icon_delete.png");
+        deleteIcon.setAttribute("title", "刪除行程");
         bookingDeleteIcon.appendChild(deleteIcon);
         bookingDeleteIcon.addEventListener("click", BookingController.deleteBooking);
 
@@ -191,9 +190,6 @@ const BookingController = {
         BookingModel.delete(bookingId);
     }
 }
-
-/* Init user features */
-User.UserController.init(BookingController.getBooking);
 
 
 /* ================= Payment: TapPay ================= */
@@ -375,5 +371,25 @@ const OrderController = {
     }
 }
 
-/* Init order features */
-OrderController.init();
+/* Export as module for rendering booking and order */
+export {
+    welcomeMessage,
+    welcomeUserName,
+    bookings,
+    bookingsNone,
+    bookingsFooter,
+    contactName,
+    contactEmail,
+    contactPhone,
+    contactPhoneError,
+    totalPrice,
+    paymentButton,
+    BookingModel,
+    BookingView,
+    BookingController,
+    
+    fields,
+    OrderModel,
+    OrderView,
+    OrderController
+};
