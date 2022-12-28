@@ -106,8 +106,14 @@ const UserView = {
         }
     },
 
-    showModal: function(){ modal.style.display = "block"; },
-    closeModal: function(){ modal.style.display = "none"; },
+    showModal: function(){
+        modal.style.display = "block";
+        document.querySelector("body").style.overflow = "hidden"; // Lock scroll
+    },
+    closeModal: function(){
+        modal.style.display = "none";
+        document.querySelector("body").style.overflow = "auto"; // Unlock scroll
+    },
 
     switchRegister: function(){
         const userName = document.getElementById("user-name");

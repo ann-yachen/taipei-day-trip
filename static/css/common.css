@@ -76,6 +76,7 @@ nav ul li {
     margin: 19px 10px; /* for vertical align */
     cursor: pointer;
 }
+/* Under-line animation when hover */
 nav ul li:after {
     content: "";
     position: absolute;
@@ -92,7 +93,7 @@ nav ul li:after {
     transform: scale(0,1);
   }
 
-  nav ul li:hover:after {
+nav ul li:hover:after {
     opacity: 1;
     -webkit-transform: scale(1);
     transform: scale(1);
@@ -114,7 +115,7 @@ nav ul li:after {
     overflow: hidden;
 }
 .user__modal-dialog {
-    position: absolute;
+    position: fixed;
     top: 80px;
     left: 50%;
     z-index: 1080;
