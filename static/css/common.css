@@ -112,7 +112,6 @@ nav ul li:hover:after {
     z-index: 1079;
     background-color: #000000;
     opacity: 0.25;
-    overflow: hidden;
 }
 .user__modal-dialog {
     position: fixed;
@@ -146,10 +145,17 @@ nav ul li:hover:after {
 }
 .user__modal-body input {
     width: 100%;
-    border: 1px solid #cccccc;
+    border: 1px solid #CCCCCC;
 }
 .user__modal-body button {
     width: 100%;
+}
+.user-input--error {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #FF2400;
+    font-weight: bold;
+    text-align: left;
 }
 .user__modal-body .user-action-result--ok {
     font-size: 14px;
