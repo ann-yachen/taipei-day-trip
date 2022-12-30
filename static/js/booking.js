@@ -8,11 +8,16 @@ const bookingsFooter = document.querySelector(".bookings__footer");
 const contactName = document.getElementById("contact-name");
 const contactEmail = document.getElementById("contact-email");
 const contactPhone = document.getElementById("contact-phone");
+const contactNameError = document.getElementById("contact-name-error");
+const contactEmailError = document.getElementById("contact-email-error");
 const contactPhoneError = document.getElementById("contact-phone-error");
 
 const totalPrice = document.getElementById("total-price");
 
 /* Get element for payment */
+const cardNumberError = document.getElementById("card-number-error");
+const cardExpirationDateError = document.getElementById("card-expiration-date-error");
+const cardCCVError = document.getElementById("card-ccv-error");
 const paymentButton = document.getElementById("payment-btn");
 
 /* ================= Booking ================= */
@@ -267,27 +272,69 @@ TPDirect.card.setup({
 })
 
 const OrderModel = {
-    getTapPayPrime: function(e){
-        e.preventDefault();
-        
+    getTapPayPrime: function(contact){
         // Get TapPay Fields status
         const tappayStatus = TPDirect.card.getTappayFieldsStatus();
+
         // Check if can getPrime or not
         if(tappayStatus.canGetPrime === false){
-            alert("Cannot get prime.");
+            switch(tappayStatus.status.number){
+                case 1:{
+                    document.getElementById("card-number").style.border = "1px solid #FF2400";
+                    cardNumberError.textContent = "請填寫卡片號碼";
+                    break;
+                }
+                case 2:{
+                    document.getElementById("card-number").style.border = "1px solid #FF2400";
+                    cardNumberError.textContent = "卡片號碼有誤";
+                    break;
+                }
+            }
+            switch(tappayStatus.status.expiry){
+                case 1:{
+                    document.getElementById("card-expiration-date").style.border = "1px solid #FF2400";
+                    cardExpirationDateError.textContent = "請填寫過期時間";
+                    break;
+                }
+                case 2:{
+                    document.getElementById("card-expiration-date").style.border = "1px solid #FF2400";
+                    cardExpirationDateError.textContent = "過期時間有誤";
+                    break;
+                }
+            }
+            switch(tappayStatus.status.ccv){
+                case 1:{
+                    document.getElementById("card-ccv").style.border = "1px solid #FF2400";
+                    cardCCVError.textContent = "請填寫驗證密碼";
+                    break;
+                }
+                case 2:{
+                    document.getElementById("card-ccv").style.border = "1px solid #FF2400";
+                    cardCCVError.textContent = "驗證密碼有誤";
+                    break;
+                }
+            }
         }else{
+            /* Reset error messages */
+            document.getElementById("card-number").style.border = "1px solid #EEEEEE";
+            document.getElementById("card-expiration-date").style.border = "1px solid #EEEEEE";
+            document.getElementById("card-ccv").style.border = "1px solid #EEEEEE";
+            cardNumberError.textContent = "";
+            cardExpirationDateError.textContent = "";
+            cardCCVError.textContent = "";
+
             // Get prime
             TPDirect.card.getPrime((result) => {
                 if(result.status !== 0){
                     alert("get prime error " + result.msg);
                 }
                 let prime =  result.card.prime;
-                OrderModel.post(prime);
-            })                 
+                OrderModel.post(prime, contact);
+            })
         }
     },
 
-    post: function(prime){
+    post: function(prime, contact){
         (async () => {
             try{
                 /* Get booking data from api */
@@ -303,7 +350,7 @@ const OrderModel = {
                 order.trip = order.data;
                 delete order.data; // Remove booking data after organization
                 /* Get contact infos */
-                const contact = OrderView.getContactInfo();
+                //const contact = OrderView.getContactInfo();
                 /* Check if contact infos have been filled */
                 if(contact !== undefined){
                     const requestOptions = {
@@ -337,20 +384,36 @@ const OrderView = {
         }
     },
 
-    getContactInfo: function(){
-        let name = contactName.value;
-        let email = contactEmail.value;
-        let phone = contactPhone.value;
-        if(phone === ""){
-            contactPhoneError.textContent = "請輸入電話";
+    validateContactName: function(){
+        if(!contactName.checkValidity()){
+            contactName.style.border = "1px solid #FF2400";
+            contactNameError.textContent = " ⚠ " + contactName.validationMessage;          
         }else{
+            contactName.style.border = "1px solid #CCCCCC";
+            contactNameError.textContent = "";
+            return contactName.value;
+        }
+    },
+
+    validateContactEmail: function(){
+        if(!contactEmail.checkValidity()){
+            contactEmail.style.border = "1px solid #FF2400";
+            contactEmailError.textContent = " ⚠ " + contactEmail.validationMessage;          
+        }else{
+            contactEmail.style.border = "1px solid #CCCCCC";
+            contactEmailError.textContent = "";
+            return contactEmail.value;
+        }
+    },
+
+    validateContactPhone: function(){
+        if(!contactPhone.checkValidity()){
+            contactPhone.style.border = "1px solid #FF2400";
+            contactPhoneError.textContent = " ⚠ " + contactPhone.validationMessage;          
+        }else{
+            contactPhone.style.border = "1px solid #CCCCCC";
             contactPhoneError.textContent = "";
-            const contact = {
-                "name": name,
-                "email": email,
-                "phone": phone
-            }
-            return contact;            
+            return contactPhone.value;
         }
     },
 
@@ -367,7 +430,22 @@ const OrderView = {
 
 const OrderController = {
     init: function(){
-        paymentButton.addEventListener("click", OrderModel.getTapPayPrime);
+        paymentButton.addEventListener("click", OrderController.payment);
+    },
+    
+    payment: function(){
+        let contact = {};
+        let name = OrderView.validateContactName();
+        let email = OrderView.validateContactEmail();
+        let phone = OrderView.validateContactPhone();
+        if(name !== undefined && email !== undefined && phone !== undefined){
+            contact = {
+                "name": name,
+                "email": email,
+                "phone": phone
+            }
+            OrderModel.getTapPayPrime(contact);
+        }
     }
 }
 
@@ -381,8 +459,13 @@ export {
     contactName,
     contactEmail,
     contactPhone,
+    contactNameError,
+    contactEmailError,
     contactPhoneError,
     totalPrice,
+    cardNumberError,
+    cardExpirationDateError,
+    cardCCVError,
     paymentButton,
     BookingModel,
     BookingView,

@@ -193,7 +193,7 @@ const UserView = {
     validateUserName: function(){
         if(!userName.checkValidity()){
             userName.style.border = "1px solid #FF2400";
-            userNameError.textContent = userName.validationMessage;
+            userNameError.textContent = " ⚠ " + userName.validationMessage;
         }else{
             userName.style.border = "1px solid #CCCCCC";
             userNameError.textContent = "";
@@ -204,7 +204,7 @@ const UserView = {
     validateUserEmail: function(){
         if(!userEmail.checkValidity()){
             userEmail.style.border = "1px solid #FF2400";
-            userEmailError.textContent = userEmail.validationMessage;
+            userEmailError.textContent = " ⚠ " + userEmail.validationMessage;
         }else{
             userEmail.style.border = "1px solid #CCCCCC";
             userEmailError.textContent = "";
@@ -219,7 +219,7 @@ const UserView = {
             if(userPassword.validity.patternMismatch){
                 errorMessage = "密碼須符合格式：8 位數以上，並且至少包含數字、小寫字母、大寫字母各 1。"
             }
-            userPasswordError.textContent = errorMessage;
+            userPasswordError.textContent = " ⚠ " + errorMessage;
         }else{
             userPassword.style.border = "1px solid #CCCCCC";
             userPasswordError.textContent = "";
@@ -285,7 +285,7 @@ const UserController = {
     logIn: function(){
         /* Clear result message*/
         userActionResult.textContent = "";
-        
+
         let email = UserView.validateUserEmail();
         let password = UserView.validateUserPassword();
         if(email !== undefined && password !== undefined){

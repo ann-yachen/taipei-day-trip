@@ -13,15 +13,21 @@
     <div class="bookings__body"></div>
     <div class="bookings__footer">
         <div class="title">您的聯絡資訊</div>
-        <div>聯絡姓名：<input type="text" id="contact-name" /></div>
-        <div>聯絡信箱：<input type="text" id="contact-email" /></div>
-        <div>手機號碼：<input type="text" id="contact-phone" /><span class="contact-phone--error" id="contact-phone-error"></span></div>
+        <div>聯絡姓名：<input type="text" id="contact-name" required /></div>
+        <div class="input--error" id="contact-name-error"></div>
+        <div>聯絡信箱：<input type="text" id="contact-email" required /></div>
+        <div class="input--error" id="contact-email-error"></div>
+        <div>手機號碼：<input type="text" maxlength="11" pattern="09\d{8}" id="contact-phone" required /></div>
+        <div class="input--error" id="contact-phone-error"></div>
         <div class="sub-title">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</div>
         <hr class="hr-solid" />
         <div class="title">信用卡付款資訊</div>
         <div class="card-info"><div>卡片號碼：</div><div class="tpfield" id="card-number"></div></div>
+        <div class="input--error" id="card-number-error"></div>
         <div class="card-info"><div>過期時間：</div><div class="tpfield" id="card-expiration-date"></div></div>
+        <div class="input--error" id="card-expiration-date-error"></div>
         <div class="card-info"><div>驗證密碼：</div><div class="tpfield" id="card-ccv"></div></div>
+        <div class="input--error" id="card-ccv-error"></div>
         <hr class="hr-solid" />
         <div class="confirm">
             <div class="sub-title">總價：新台幣 <span id="total-price"></span> 元</div>
