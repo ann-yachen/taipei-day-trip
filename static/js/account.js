@@ -103,11 +103,17 @@ const UserAccountView = {
             let orderDetails = document.createElement("div");
             orderDetails.className = "order__details";
 
+            /* Create elements with trip details */
+            let orderTrips = document.createElement("div");
             let orderTripsData = result.data.trip;
             for(let i = 0; i < orderTripsData.length; i++){
                 let orderTrip = UserAccountView.renderOrderTrip(orderTripsData[i]);
-                orderDetails.appendChild(orderTrip);
+                orderTrips.appendChild(orderTrip);
             }
+
+            /* Create elements with contact details */
+            let orderContact = UserAccountView.renderOrderContact(result);
+            orderDetails.append(orderTrips, orderContact);
 
             /* Get target order by order number */
             let orderIndex = orderList[result.data.number];
@@ -119,10 +125,6 @@ const UserAccountView = {
     renderOrderTrip: function(orderTripData){
         /* Create DocumentFragment for each booking rendering */
         let orderTripFragment = document.createDocumentFragment();
-        
-        /* Create trip */
-        let trip = document.createElement("div");
-        trip.className = "trip";
         
         /* Create booking content */
         let content = document.createElement("div");
@@ -142,7 +144,7 @@ const UserAccountView = {
 
         let name = document.createElement("div");
         name.className = "attraction-name";
-        name.textContent = "台北一日遊：" + orderTripData.attraction.name;
+        name.textContent = "景點名稱：" + orderTripData.attraction.name;
 
         let date = document.createElement("div");
         let dateTitle = document.createElement("span");
@@ -180,14 +182,41 @@ const UserAccountView = {
         info.append(name, date, time, price, address);
         content.append(image, info);
 
-        /* Create hr */
+        orderTripFragment.appendChild(content);
+        return orderTripFragment;
+    },
+
+    renderOrderContact: function(result){
+        let orderContactFragment = document.createDocumentFragment();
+
         let hr = document.createElement("hr");
         hr.className = "hr-solid";
 
-        trip.append(content, hr);
-        orderTripFragment.appendChild(trip);
+        let orderContact = document.createElement("div");
+        orderContact.className = "order__contact";
 
-        return orderTripFragment;
+        let orderContactName = document.createElement("div");
+        let orderContactNameTitle = document.createElement("span");
+        orderContactNameTitle.className = "sub-title";
+        orderContactNameTitle.textContent = "聯絡姓名：";
+        orderContactName.append(orderContactNameTitle, result.data.contact.name);
+
+        let orderContactEmail = document.createElement("div");
+        let orderContactEmailTitle = document.createElement("span");
+        orderContactEmailTitle.className = "sub-title";
+        orderContactEmailTitle.textContent = "聯絡信箱：";
+        orderContactEmail.append(orderContactEmailTitle, result.data.contact.email);
+
+        let orderContactPhone = document.createElement("div");
+        let orderContactPhoneTitle = document.createElement("span");
+        orderContactPhoneTitle.className = "sub-title";
+        orderContactPhoneTitle.textContent = "手機號碼：";
+        orderContactPhone.append(orderContactPhoneTitle, result.data.contact.phone);        
+
+        orderContact.append(orderContactName, orderContactEmail, orderContactPhone);
+        
+        orderContactFragment.append(hr, orderContact);
+        return orderContactFragment;
     }
 }
 

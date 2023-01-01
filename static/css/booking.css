@@ -131,6 +131,7 @@ main {
         grid-template-columns: auto;
         grid-template-rows: 255px auto;
         align-items: center;
+        gap: 0px;
     }
     .booking__delete-icon {
         position: static;

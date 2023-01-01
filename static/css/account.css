@@ -4,7 +4,6 @@
 }
 .sub-title {
     font-weight: bold;
-    margin: 20px 0px;
 }
 button {
     font-size: 16px;
@@ -12,8 +11,7 @@ button {
 .hr-solid {
     width: 100%;
     border: 0px;
-    border-top: 1px solid #E8E8E8;
-    margin: 40px 0px;
+    border-top: 1px solid #FFFFFF;
 }
 
 main {
@@ -22,10 +20,8 @@ main {
 }
 section {
     width: 100%;
-    padding: 0px 110px;
-}
-.container, .container div {
-    margin: 20px 0px;
+    padding: 30px 110px;
+    line-height: 2;
 }
 
 .order__info {
@@ -33,15 +29,19 @@ section {
     grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
     gap: 30px;
     align-items: center;
-}
-.order__info div {
-    margin: 0px; /* Reset order info with grid */
+    margin-bottom: 20px;
 }
 .order-number {
     color: #448899;
     font-weight: bold;
 }
 
+.order__details {
+    padding: 20px;
+    background-color: #E8E8E8;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
 .content {
     display: grid;
     grid-template-columns: 250px auto;
@@ -57,7 +57,12 @@ section {
 .info .attraction-name {
     color: #448899;
     font-weight: bold;
-    margin-bottom: 30px;
+}
+
+.order__contact {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
 }
 
 /* CSS media query */
@@ -67,7 +72,7 @@ section {
         width: 90%;
     }
     section {
-        padding: 0px;
+        padding: 20px 0px;
     }
 }
 /* Mobile: 360px < size <= 600x */ 
@@ -76,14 +81,20 @@ section {
         width: 90%;
     }   
     section {
-        padding: 0px;
+        padding: 20px 0px;
     }
     .order__info {
         grid-template-columns: auto;
+        gap: 0px;
+    }
+    .order__contact {
+        grid-template-columns: auto;
+        gap: 0px;
     }
     .content {
         grid-template-columns: auto;
         grid-template-rows: 255px auto;
         align-items: center;
+        gap: 0px;
     }
 }
