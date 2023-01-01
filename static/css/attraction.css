@@ -105,8 +105,7 @@ main {
     border-radius: 0px;
     padding: 5px 10px;
 }
-.booking .date--error {
-    margin-left: 10px;
+.booking .input--error {
     font-size: 14px;
     color: #FF2400;
     font-weight: bold;

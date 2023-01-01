@@ -189,9 +189,8 @@ const BookingController = {
     },
 
     deleteBooking: function(){
-        console.log(this);
         let bookingId = this.getAttribute("booking-id");
-        console.log(bookingId);
+
         BookingModel.delete(bookingId);
     }
 }
@@ -384,6 +383,7 @@ const OrderView = {
         }
     },
 
+    /* Input validation for contact infos */
     validateContactName: function(){
         if(!contactName.checkValidity()){
             contactName.style.border = "1px solid #FF2400";
@@ -417,6 +417,7 @@ const OrderView = {
         }
     },
 
+    /* Lock payment button when payment is on-going */
     lockPaymentButton: function(){
         paymentButton.setAttribute("disabled", "disabled");
         paymentButton.textContent = "付款中請稍候...";

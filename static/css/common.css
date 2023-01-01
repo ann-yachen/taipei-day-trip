@@ -32,6 +32,10 @@ button {
 button:hover {
     background-color: #66AABB;
 }
+button:disabled {
+    background-color: #E8E8E8;
+    color: #000000;
+}
 
 /* Headline */
 .headline {

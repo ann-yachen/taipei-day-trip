@@ -7,7 +7,7 @@ from model.jwt import JWTAuthModel
 
 order_blueprint = Blueprint("order", __name__)
 
-@order_blueprint.route("/orders", methods = ["POST"])
+@order_blueprint.route("/orders", methods = ["POST", "GET"])
 def orders():
     token = request.cookies.get("token")
     email = JWTAuthModel.decode(token)
@@ -19,64 +19,68 @@ def orders():
             user = cnxcursor.fetchone()
             if user:
                 user_id = user["id"]
-                prime = request.json["prime"]
-                sql = (
-                    "SELECT " 
-                        "booking.date, "
-                        "booking.time, "
-                        "booking.price, "
-                        "booking.attraction_id, "
-                        "attractions.name, "
-                        "attractions.address, "
-                        "GROUP_CONCAT(attraction_images.images) AS images "
-                    "FROM booking "
-                    "INNER JOIN attractions "
-                    "ON booking.attraction_id=attractions.id "
-                    "INNER JOIN attraction_images "
-                    "ON attractions.id=attraction_images.attraction_id "
-                    "WHERE user_id=%s "
-                    "GROUP BY "
-                        "booking.date, "
-                        "booking.time, "
-                        "booking.price, "
-                        "booking.attraction_id, "
-                        "attractions.name, "
-                        "attractions.address"
-                )
-                par = (user_id, )
-                cnxcursor.execute(sql, par)
-                bookings = cnxcursor.fetchall()
-                total_price = 0
-                for booking in bookings:
-                    # Calculate total price
-                    total_price += booking["price"]
-                    # Get the first image of attraction
-                    images = booking["images"].split(",")
-                    image = images[0]
-                    booking["attraction"] = {
-                        "id": booking["attraction_id"],
-                        "name": booking["name"],
-                        "address": booking["address"],
-                        "image": image
+                if request.method == "POST":
+                    prime = request.json["prime"]
+                    sql = (
+                        "SELECT " 
+                            "booking.date, "
+                            "booking.time, "
+                            "booking.price, "
+                            "booking.attraction_id, "
+                            "attractions.name, "
+                            "attractions.address, "
+                            "GROUP_CONCAT(attraction_images.images) AS images "
+                        "FROM booking "
+                        "INNER JOIN attractions "
+                        "ON booking.attraction_id=attractions.id "
+                        "INNER JOIN attraction_images "
+                        "ON attractions.id=attraction_images.attraction_id "
+                        "WHERE user_id=%s "
+                        "GROUP BY "
+                            "booking.date, "
+                            "booking.time, "
+                            "booking.price, "
+                            "booking.attraction_id, "
+                            "attractions.name, "
+                            "attractions.address"
+                    )
+                    par = (user_id, )
+                    cnxcursor.execute(sql, par)
+                    bookings = cnxcursor.fetchall()
+                    total_price = 0
+                    for booking in bookings:
+                        # Calculate total price
+                        total_price += booking["price"]
+                        # Get the first image of attraction
+                        images = booking["images"].split(",")
+                        image = images[0]
+                        booking["attraction"] = {
+                            "id": booking["attraction_id"],
+                            "name": booking["name"],
+                            "address": booking["address"],
+                            "image": image
+                        }
+                        booking["date"] = booking["date"].strftime("%Y-%m-%d") # Change to YYYY-MM-DD
+                        # Remove key-value to meet spec
+                        remove_key_list = {
+                            "attraction_id",
+                            "name",
+                            "address",
+                            "images"
+                        }
+                        for key in remove_key_list:
+                            booking.pop(key, None)
+                    order = {
+                        "price": total_price,
+                        "trip": bookings
                     }
-                    booking["date"] = booking["date"].strftime("%Y-%m-%d") # Change to YYYY-MM-DD
-                    # Remove key-value to meet spec
-                    remove_key_list = {
-                        "price",
-                        "attraction_id",
-                        "name",
-                        "address",
-                        "images"
-                    }
-                    for key in remove_key_list:
-                        booking.pop(key, None)
-                order = {
-                    "price": total_price,
-                    "trip": bookings
-                }
-                contact = request.json["contact"]
-                response = OrderModel.create_order(user_id, prime, order, contact)
-                return response
+                    contact = request.json["contact"]
+                    response = OrderModel.create_order(user_id, prime, order, contact)
+                    return response
+                
+                if request.method == "GET":
+                    response = OrderModel.get_orders_by_user(user_id)
+                    return response
         except:
             return {"error": True, "message": "伺服器內部錯誤"}, 500
         finally:

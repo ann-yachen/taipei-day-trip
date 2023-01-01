@@ -80,7 +80,7 @@ const UserModel = {
             try{
                 const response = await fetch("/api/user/auth", requestOptions);
                 const result = await response.json();
-                UserView.showMessage(result, "logIn");                 
+                UserView.showMessage(result, "logIn");
             }catch(err){
                 console.log(err);                
             }
@@ -93,7 +93,7 @@ const UserModel = {
             try{
                 const response = await fetch("/api/user/auth", requestOptions);
                 const result = await response.json();
-                UserView.showMessage(result, "logOut");                
+                UserView.showMessage(result, "logOut");
             }catch(err){
                 console.log(err);
             }
@@ -110,9 +110,9 @@ const UserView = {
             userBooking.addEventListener("click", UserView.showModal);
         }else{
             userData = result;
-            user.textContent = "登出系統";
-            user.setAttribute("title", "登出系統");
-            user.addEventListener("click", UserController.logOut);
+            user.textContent = "會員中心";
+            user.setAttribute("title", "會員中心");
+            user.addEventListener("click", UserView.redirectAccount);
             userBooking.addEventListener("click", UserView.redirectBooking);
         }
     },
@@ -190,6 +190,7 @@ const UserView = {
         userActionSwitch.addEventListener("click", UserView.switchRegister);
     },
 
+    /* Input validation for User */
     validateUserName: function(){
         if(!userName.checkValidity()){
             userName.style.border = "1px solid #FF2400";
@@ -258,6 +259,10 @@ const UserView = {
 
     redirectBooking: function(){
         window.location.href = "/booking";
+    },
+
+    redirectAccount: function(){
+        window.location.href = "/account";
     }
 }
 
@@ -278,6 +283,7 @@ const UserController = {
         let email = UserView.validateUserEmail();
         let password = UserView.validateUserPassword();
         if(name !== undefined && email !== undefined && password !== undefined){
+            userActionButton.setAttribute("disabled", "disabled");
             UserModel.post(name, email, password);
         }
     },
@@ -289,11 +295,13 @@ const UserController = {
         let email = UserView.validateUserEmail();
         let password = UserView.validateUserPassword();
         if(email !== undefined && password !== undefined){
+            userActionButton.setAttribute("disabled", "disabled");
             UserModel.put(email, password);
         }
     },
 
     logOut: function(){
+        this.setAttribute("disabled", "disabled");
         UserModel.delete();
     }
 }

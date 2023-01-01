@@ -38,9 +38,10 @@ class OrderModel:
                         "attraction_address, "
                         "attraction_image, "
                         "date, "
-                        "time"
+                        "time, "
+                        "price"
                     ") "
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 )
                 par = (
                     number, 
@@ -49,7 +50,8 @@ class OrderModel:
                     trip["attraction"]["address"],
                     trip["attraction"]["image"],
                     trip["date"],
-                    trip["time"]
+                    trip["time"],
+                    trip["price"]
                 )
                 cnxcursor.execute(sql, par)
 
@@ -116,6 +118,24 @@ class OrderModel:
             cnxcursor.close()
             cnx.close()
 
+    # Get old orders by user id
+    def get_orders_by_user(user_id):
+        try:
+            cnx = CNX_POOL.get_connection()
+            cnxcursor = cnx.cursor(dictionary = True)
+            cnxcursor.execute("SELECT number, price, status FROM orders WHERE user_id=%s", (user_id, ))
+            old_orders = cnxcursor.fetchall()
+            if not old_orders: # If old_orders is an empty list
+                return {"data": None}
+            else:
+                return {"data": old_orders}
+        except:
+            return {"error": True, "message": "伺服器內部錯誤"}, 500
+        finally:
+            cnxcursor.close()
+            cnx.close()
+
+    # Get order details by order number
     def get_order_by_number(user_id, orderNumber):
         try:
             cnx = CNX_POOL.get_connection()
@@ -145,7 +165,8 @@ class OrderModel:
                         "attraction_address, "
                         "attraction_image, "
                         "date, "
-                        "time "
+                        "time, "
+                        "price "
                     "FROM order_trip "
                     "WHERE order_number=%s"
                 )
