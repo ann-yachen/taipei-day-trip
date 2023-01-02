@@ -27,29 +27,33 @@ class OrderModel:
             par = (number, user_id, prime, order["price"], 0)
             cnxcursor.execute(sql, par)
 
-            # Save trip details into order_trip
-            sql = (
-                "INSERT INTO order_trip ("
-                    "order_number, "
-                    "attraction_id, "
-                    "attraction_name, "
-                    "attraction_address, "
-                    "attraction_image, "
-                    "date, "
-                    "time"
-                ") "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            )
-            par = (
-                number, 
-                order["attraction"]["id"], 
-                order["attraction"]["name"],
-                order["attraction"]["address"],
-                order["attraction"]["image"],
-                order["date"],
-                order["time"]
-            )
-            cnxcursor.execute(sql, par)
+            # Save trip details into order_trip for each trip
+            trips = order["trip"]
+            for trip in trips:
+                sql = (
+                    "INSERT INTO order_trip ("
+                        "order_number, "
+                        "attraction_id, "
+                        "attraction_name, "
+                        "attraction_address, "
+                        "attraction_image, "
+                        "date, "
+                        "time, "
+                        "price"
+                    ") "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                )
+                par = (
+                    number, 
+                    trip["attraction"]["id"], 
+                    trip["attraction"]["name"],
+                    trip["attraction"]["address"],
+                    trip["attraction"]["image"],
+                    trip["date"],
+                    trip["time"],
+                    trip["price"]
+                )
+                cnxcursor.execute(sql, par)
 
             # Save contact details into order_contact
             sql = (
@@ -114,29 +118,37 @@ class OrderModel:
             cnxcursor.close()
             cnx.close()
 
+    # Get old orders by user id
+    def get_orders_by_user(user_id):
+        try:
+            cnx = CNX_POOL.get_connection()
+            cnxcursor = cnx.cursor(dictionary = True)
+            cnxcursor.execute("SELECT number, price, status FROM orders WHERE user_id=%s", (user_id, ))
+            old_orders = cnxcursor.fetchall()
+            if not old_orders: # If old_orders is an empty list
+                return {"data": None}
+            else:
+                return {"data": old_orders}
+        except:
+            return {"error": True, "message": "伺服器內部錯誤"}, 500
+        finally:
+            cnxcursor.close()
+            cnx.close()
+
+    # Get order details by order number
     def get_order_by_number(user_id, orderNumber):
         try:
             cnx = CNX_POOL.get_connection()
             cnxcursor = cnx.cursor(dictionary = True)
             sql = (
                 "SELECT "
-                    "id, "
                     "number, "
                     "price, "
                     "status, "
-                    "attraction_id, "
-                    "attraction_name, "
-                    "attraction_address, "
-                    "attraction_image, "
-                    "date, "
-                    "time, "
                     "contact_name, "
                     "contact_email, "
-                    "contact_phone, "
-                    "status "
+                    "contact_phone "
                 "FROM orders "
-                "INNER JOIN order_trip "
-                "ON orders.number=order_trip.order_number "
                 "INNER JOIN order_contact "
                 "ON orders.number=order_contact.order_number "
                 "WHERE number=%s AND user_id=%s"
@@ -145,40 +157,60 @@ class OrderModel:
             cnxcursor.execute(sql, par)
             order = cnxcursor.fetchone()
             if order:
-                # Organize data to meet spec
-                attraction = {
-                    "id": order["attraction_id"],
-                    "name": order["attraction_name"],
-                    "address": order["attraction_address"], 
-                    "image": order["attraction_image"]
-                }
-                trip = {
-                    "attraction": attraction,
-                    "date": order["date"].strftime("%Y-%m-%d"),
-                    "time": order["time"]
-                }
+                # Get trips detail of order
+                sql = (
+                    "SELECT "
+                        "attraction_id, "
+                        "attraction_name, "
+                        "attraction_address, "
+                        "attraction_image, "
+                        "date, "
+                        "time, "
+                        "price "
+                    "FROM order_trip "
+                    "WHERE order_number=%s"
+                )
+                par = (orderNumber, )
+                cnxcursor.execute(sql, par)
+                trips = cnxcursor.fetchall()
+
+                # Organize trip data to meet spec
+                for trip in trips:
+                    trip["attraction"] = {
+                        "id": trip["attraction_id"],
+                        "name": trip["attraction_name"],
+                        "address": trip["attraction_address"], 
+                        "image": trip["attraction_image"]                        
+                    }
+                    # Remove key-value to meet spec
+                    remove_key_list = {
+                        "attraction_id",
+                        "attraction_name",
+                        "attraction_address",
+                        "attraction_image"
+                    }
+                    for key in remove_key_list:
+                        trip.pop(key, None)
+                    trip["date"] = trip["date"].strftime("%Y-%m-%d")
+
+                # Organize contact data to meet spec
                 contact = {
                     "name": order["contact_name"],
                     "email": order["contact_email"],
                     "phone": order["contact_phone"]
                 }
-                order["trip"] = trip
+                
+                # Add organized data into order then remove key-value to meet spec
+                order["trip"] = trips
                 order["contact"] = contact
-                remove_key_list = (
-                    "id",
-                    "attraction_id",
-                    "attraction_name",
-                    "attraction_address",
-                    "attraction_image",
-                    "date",
-                    "time",
+                remove_key_list = {
                     "contact_name",
                     "contact_email",
                     "contact_phone"
-                )
-                # Remove key-value which have been organized
+                }
                 for key in remove_key_list:
                     order.pop(key, None)
+
                 return {"data": order}
             else:
                 return {"error": True, "message": "訂單不存在"}, 400

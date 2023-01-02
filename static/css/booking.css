@@ -10,9 +10,11 @@ input {
     padding: 10px;
     border: 1px solid #E8E8E8;
 }
-button:disabled {
-    background-color: #E8E8E8;
-    color: #000000;
+.hr-solid {
+    width: 100%;
+    border: 0px;
+    border-top: 1px solid #E8E8E8;
+    margin: 40px 0px;
 }
 
 main {
@@ -20,26 +22,27 @@ main {
     margin: 65px auto;
 }
 
-.booking {
+.bookings {
     width: 100%;
     padding: 0px 110px;
-    box-sizing: border-box;
 }
-.booking__header {
+.bookings__header {
     display: none;
     margin: 35px 0px;
 }
-.booking__body--none {
+.bookings__body--none {
     display: none;
 }
-.booking__body {
-    position: relative;
+.bookings__body {
     display: none;
 }
-.booking__body div {
-    margin: 15px 0px;
+.bookings__body div {
+    margin: 20px 0px;
 }
 
+.booking {
+    position: relative;
+}
 .content {
     display: grid;
     grid-template-columns: 250px auto;
@@ -57,25 +60,33 @@ main {
     font-weight: bold;
     margin-bottom: 30px;
 }
-
-.booking__body__delete-icon {
+.booking__delete-icon {
     position: absolute;
     top: 0px;
     right: 0px;
     cursor: pointer;
+    -webkit-transtion: 0.5s;
+    transition: 0.5s;
+}
+.booking__delete-icon:hover {
+    -webkit-filter: invert(1);
+    filter: invert(1);
 }
 
-.contact-phone--error {
-    margin-left: 10px;
-    font-size: 14px;
-    color: #FF2400;
-    font-weight: bold;
+.bookings__footer {
+    display: none;
+}
+.bookings__footer div {
+    margin: 15px 0px;
 }
 
 /* For TapPay */
 .card-info {
     display: flex;
     align-items: center;
+}
+.card-info div{
+    margin: 0px;
 }
 .tpfield {
     width: 235px;
@@ -86,16 +97,17 @@ main {
     border-radius: 5px;
 }
 
+.input--error {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #FF2400;
+    font-weight: bold;
+}
+
 .confirm {
     text-align: right;
 }
 
-.hr-solid {
-    width: 100%;
-    border: 0px;
-    border-top: 1px solid #E8E8E8;
-    margin: 40px 0px;
-}
 
 /* CSS media query */
 /* 600px < size <= 1200px */ 
@@ -103,7 +115,7 @@ main {
     main {
         width: 90%;
     }
-    .booking {
+    .bookings {
         padding: 0px;
     }
 }
@@ -112,15 +124,16 @@ main {
     main {
         width: 90%;
     }   
-    .booking {
+    .bookings {
         padding: 0px;
     }
     .content {
         grid-template-columns: auto;
         grid-template-rows: 255px auto;
         align-items: center;
+        gap: 0px;
     }
-    .booking__body .booking__body__delete-icon {
+    .booking__delete-icon {
         position: static;
         text-align: right;
     }

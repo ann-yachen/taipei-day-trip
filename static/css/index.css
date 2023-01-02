@@ -35,6 +35,11 @@
     padding: 9px 15px;
     vertical-align: middle;
     cursor: pointer;
+    -webkit-transtion: background-color 0.5s;
+    transition: background-color 0.5s;
+}
+.search__search-icon:hover {
+    background-color: #66AABB;
 }
 /* For closing menu of categories when clicking out of menu */
 .search__categories-close {
@@ -88,6 +93,11 @@
     position: relative; /* for child element using absolute position */
     border: 1px #e8e8e8 solid;
     border-radius: 5px;
+    -webkit-transition: 0.3s ease-in-out;
+    transition: 0.3s ease-in-out;
+}
+.attraction:hover {
+    opacity: 0.85;    
 }
 .attraction img {
     display: block;

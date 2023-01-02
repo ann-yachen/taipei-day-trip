@@ -1,6 +1,3 @@
-import * as User from "./user.js"
-User.UserController.init(); // Init user features
-
 /* ================= Render Attractions ================= */
 /* For rendering of attractions */       
 const attractions = document.getElementById("attractions");
@@ -58,7 +55,8 @@ const AttractionsView = {
 
                 /* Create image of attraction with hyperlink */                    
                 let imageLink = document.createElement("a");
-                imageLink.setAttribute("href", "/attraction/" + attractionsData[i]["id"]);                 
+                imageLink.setAttribute("href", "/attraction/" + attractionsData[i]["id"]);
+                imageLink.setAttribute("title", attractionsData[i]["name"]);
                 let image = document.createElement("img");
                 image.setAttribute("src", attractionsData[i]["images"][0]);
                 image.className = "attraction-img";
@@ -146,10 +144,6 @@ const AttractionsController = {
     }
 }
 
-/* Init attractions features */
-AttractionsController.init();
-
-
 /* ================= Show Categories for searching ================= */
 /* For rendering categories of search */
 const categories = document.getElementById("categories");
@@ -207,5 +201,25 @@ const CategoriesController = {
     }
 }
 
-/* Init categories features */
-CategoriesController.init();
+/* Export as module for attractions rendering and categories menu for keyword in index.html */
+export {
+    attractions,
+    page,
+    keyword,
+    src,
+    isLoading,
+    footer,
+    pageEndObserver,
+    searchIcon,
+    searchKeyword,
+    AttractionsModel,
+    AttractionsView,
+    AttractionsController,
+
+    categories,
+    categoriesMenu,
+    outOfCategoriesMenu,
+    CategoriesModel,
+    CategoriesView,
+    CategoriesController
+};

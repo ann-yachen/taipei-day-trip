@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}會員中心{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/css/account.css">
+{% endblock %}
+
+{% block section %}
+<section>
+    <div class="dialog-title">個人資料</div>
+    <div><span class="sub-title">帳號：</span><span id="account-user-email"></span></div>
+    <div><span class="sub-title">名稱：</span><span id="account-user-name"></span></div>
+    <button id="log-out">登出系統</button>
+</section>
+<section>
+    <div class="dialog-title">歷史訂單</div>
+    <div id="order-history"></div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script type="module", src="/js/account.js"></script>
+<script type="module">
+    import * as User from "/js/user.js";
+    import * as UserAccount from "/js/account.js";
+
+    /* Init user features */
+    User.UserController.init(UserAccount.UserAccountController.init);
+</script>
+{% endblock %}

@@ -27,6 +27,14 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.5s;
+}
+button:hover {
+    background-color: #66AABB;
+}
+button:disabled {
+    background-color: #E8E8E8;
+    color: #000000;
 }
 
 /* Headline */
@@ -67,10 +75,33 @@ nav ul {
     display: flex;
     list-style-type: none;
 }
-nav ul li{
-    padding: 19px 10px; /* for vertical align */
+nav ul li {
+    position: relative;
+    margin: 19px 10px; /* for vertical align */
     cursor: pointer;
 }
+/* Under-line animation when hover */
+nav ul li:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    display: inline-block;
+    height: 1em;
+    width: 100%;
+    border-bottom: 1px solid #666666;
+    margin-top: 5px;
+    opacity: 0;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: scale(0,1);
+    transform: scale(0,1);
+  }
+
+nav ul li:hover:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
 
 /* Modal for sign-in and sign-up */
 .user__modal {
@@ -85,10 +116,9 @@ nav ul li{
     z-index: 1079;
     background-color: #000000;
     opacity: 0.25;
-    overflow: hidden;
 }
 .user__modal-dialog {
-    position: absolute;
+    position: fixed;
     top: 80px;
     left: 50%;
     z-index: 1080;
@@ -119,10 +149,17 @@ nav ul li{
 }
 .user__modal-body input {
     width: 100%;
-    border: 1px solid #cccccc;
+    border: 1px solid #CCCCCC;
 }
 .user__modal-body button {
     width: 100%;
+}
+.user-input--error {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #FF2400;
+    font-weight: bold;
+    text-align: left;
 }
 .user__modal-body .user-action-result--ok {
     font-size: 14px;

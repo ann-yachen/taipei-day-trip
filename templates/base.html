@@ -12,10 +12,10 @@
 <body>
     <header>
         <nav>
-            <div class="headline logo">台北一日遊</div>
+            <div title="回首頁" class="headline logo">台北一日遊</div>
             <ul>
-                <li id="user-booking">預定行程</li>
-                <li id="user">登入/註冊</li>
+                <li title="預定行程" id="user-booking">預定行程</li>
+                <li title="登入/註冊" id="user">登入/註冊</li>
             </ul>
         </nav>
     </header>
@@ -31,10 +31,13 @@
                     </div>                    
                     <div class="user__modal-body">
                         <input type="text" placeholder="輸入名稱" id="user-name" style="display: none;" required />
+                        <div class="user-input--error" id="user-name-error"></div>
                         <div style="height: 10px;"></div>
                         <input type="email" placeholder="輸入電子信箱" id="user-email" required />
+                        <div class="user-input--error" id="user-email-error"></div>
                         <div style="height: 10px;"></div>
-                        <input type="password" placeholder="輸入密碼" id="user-password" required />
+                        <input type="password" placeholder="輸入密碼" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" id="user-password" required />
+                        <div class="user-input--error" id="user-password-error"></div>
                         <div style="height: 10px;"></div>
                         <button id="user-action-btn">登入帳戶</button>
                         <div style="height: 10px;"></div>
@@ -54,7 +57,6 @@
     <script>
         const logo = document.querySelector(".logo");
         logo.addEventListener("click", () => { window.location.href = "/"; }); // Back to homepage
-        let userData = {};
     </script>
     <script type="module", src="/js/user.js"></script>
     {% block script %}{% endblock %}
