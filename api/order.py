@@ -2,8 +2,13 @@ from config.config import CNX_POOL
 
 from flask import Blueprint, request
 from model.order import OrderModel
-
 from model.jwt import JWTAuthModel
+
+import re # For input validation
+# Regex for input validation of contact
+name_validate_pattern = re.compile(r"(.|\s)*\S(.|\s)*")
+email_validate_pattern = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
+phone_validate_pattern = re.compile(r"09[0-9]{8}")
 
 order_blueprint = Blueprint("order", __name__)
 
@@ -75,8 +80,11 @@ def orders():
                         "trip": bookings
                     }
                     contact = request.json["contact"]
-                    response = OrderModel.create_order(user_id, prime, order, contact)
-                    return response
+                    if re.fullmatch(name_validate_pattern, contact["name"]) and re.fullmatch(email_validate_pattern, contact["email"]) and re.fullmatch(phone_validate_pattern, contact["phone"]):
+                        response = OrderModel.create_order(user_id, prime, order, contact)
+                        return response
+                    else:
+                        return {"error": True, "message": "聯絡資訊格式不正確"}, 400
                 
                 if request.method == "GET":
                     response = OrderModel.get_orders_by_user(user_id)
