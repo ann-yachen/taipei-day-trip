@@ -1,3 +1,5 @@
+import { LoadingView } from "./loading.js"; // For loading before fetching finish
+
 /* ================= Render Attractions ================= */
 /* For rendering of attractions */       
 const attractions = document.getElementById("attractions");
@@ -34,6 +36,7 @@ const AttractionsModel = {
                 AttractionsView.getNextPage(result);
                 /* After fetching, record the page is not loading for next fetching */
                 isLoading = false;
+                LoadingView.showLoading(false);
             }catch(err){
                 console.log(err)
             }
