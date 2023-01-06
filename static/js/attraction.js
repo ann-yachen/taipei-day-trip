@@ -1,4 +1,5 @@
 import { UserView } from "./user.js"; // For switchBooking by checking login status
+import { LoadingView } from "./loading.js"; // For loading before fetching finish
 
 /* ================= Render Attraction ================= */
 /* Get current URL to get attraction id for fetching */
@@ -31,6 +32,7 @@ const AttractionModel = {
                 AttractionView.renderInfo(attractionData);
                 AttractionView.renderImages(attractionImages);
                 AttractionView.showCarouselImages(imageIndex); // Change images as carousel
+                LoadingView.showLoading(false); // Loading finished
             }catch(err){
                 console.log(err);
             }

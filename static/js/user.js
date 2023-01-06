@@ -59,7 +59,7 @@ const UserModel = {
                 const result = await response.json();
                 UserView.showUserStatus(result);
                 if(callback !== undefined){ // If there is a callback
-                    callback(result); // Do something            
+                    callback(result); // Do something
                 }
             }catch(err){
                 console.log(err);

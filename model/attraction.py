@@ -1,7 +1,5 @@
 from config.config import CNX_POOL
 
-from flask import jsonify
-
 class Attraction:
 	def get_attractions(page, keyword, item_per_page, offset):
 		# Check if keyword exists for different sql query setting
@@ -60,9 +58,9 @@ class Attraction:
 				attractions.pop() # Remove the 1st row of next page
 			else: 			
 				next_page = None
-			return jsonify({"nextPage": next_page, "data": attractions}), 200
+			return {"nextPage": next_page, "data": attractions}, 200
 		except:
-			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
+			return {"error": True, "message": "伺服器內部錯誤"}, 500
 		finally:
 			cnxcursor.close()
 			cnx.close()	
@@ -94,12 +92,12 @@ class Attraction:
 			attraction_data = cnxcursor.fetchone()
 			if attraction_data:
 				attraction_data["images"] = attraction_data["images"].split(",")				
-				return jsonify({"data": attraction_data}), 200
+				return {"data": attraction_data}, 200
 			# If id is not found
 			else:
-				return jsonify({"error": True, "message": "景點編號不正確"}), 400
+				return {"error": True, "message": "景點編號不正確"}, 400
 		except:
-			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
+			return {"error": True, "message": "伺服器內部錯誤"}, 500
 		finally:
 			cnxcursor.close()
 			cnx.close()
@@ -116,9 +114,9 @@ class Category:
 			)
 			cnxcursor.execute(sql)
 			categories = [category[0] for category in cnxcursor.fetchall()] # Change a tuple from fetchall to a list
-			return jsonify({"data": categories}), 200
+			return {"data": categories}, 200
 		except:
-			return jsonify({"error": True, "message": "伺服器內部錯誤"}), 500
+			return {"error": True, "message": "伺服器內部錯誤"}, 500
 		finally:
 			cnxcursor.close()
 			cnx.close()

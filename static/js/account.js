@@ -1,4 +1,5 @@
-import { UserController } from "./user.js";
+import { UserController } from "./user.js"; // To get user infos
+import { LoadingView } from "./loading.js"; // For loading before fetching finish
 
 let orderList = {};
 
@@ -16,10 +17,11 @@ const UserAccountModel = {
                 const response = await fetch("/api/orders");
                 const result = await response.json();
                 UserAccountView.showOldOrders(result);
+                LoadingView.showLoading(false); // Loading finshed
             }catch(err){
                 console.log(err);
             }
-       })(); 
+       })();
     },
 
     getByNumber: function(orderNumber){

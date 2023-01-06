@@ -1,3 +1,5 @@
+import { LoadingView } from "./loading.js"; // For loading before fetching finish
+
 const welcomeMessage = document.querySelector(".bookings__header");
 const welcomeUserName = document.getElementById("welcome-user-name");
 
@@ -32,6 +34,7 @@ const BookingModel = {
                     window.location.href = "/";
                 }else{
                     BookingView.showBooking(result);
+                    LoadingView.showLoading(false); // Loading finshed
                 }
             }catch(err){
                 console.log(err);
