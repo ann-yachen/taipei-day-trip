@@ -33,13 +33,10 @@ MySQL
 AWS EC2
 
 ### Frontend
-HTML
-
-CSS
-
+HTML  
+CSS  
 JavaScript
 
 ## Contact
-👩🏻‍💻 Yu-An Chen
-
+👩🏻‍💻 Yu-An Chen  
 📧 Email: yachen877@gmail.com
