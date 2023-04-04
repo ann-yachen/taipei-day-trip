@@ -34,9 +34,12 @@ AWS EC2
 
 ### Frontend
 HTML
+
 CSS
+
 JavaScript
 
 ## Contact
 👩🏻‍💻 Yu-An Chen
+
 📧 Email: yachen877@gmail.com
