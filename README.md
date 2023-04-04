@@ -4,7 +4,7 @@
 
 Taipei Day Trip is an e-commerce website for searching and booking one-day tours in Taipei.
 
-![](https://github.com/ann-yachen/taipei-day-trip/blob/develop/taipei-day-trip.gif?raw=true)
+![](https://github.com/ann-yachen/taipei-day-trip/blob/develop/taipei-day-trip-demo.gif?raw=true)
 
 ## Test User
 
